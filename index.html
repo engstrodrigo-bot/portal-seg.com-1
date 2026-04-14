@@ -8,7 +8,7 @@
         :root { --ss-yellow: #FDC82F; --ss-blue: #003366; --bg: #F4F7F9; }
         body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background-color: var(--bg); overflow-x: hidden; }
         header { background-color: var(--ss-yellow); color: #000; padding: 25px; font-weight: bold; font-size: 1.5em; text-align: center; border-bottom: 12px solid var(--ss-blue); }
-        .container { max-width: 500px; margin: 40px auto; padding: 30px; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        .container { max-width: 500px; margin: 40px auto; padding: 30px; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
         h1 { font-size: 1.4em; color: var(--ss-blue); text-transform: uppercase; margin-bottom: 20px; }
         input { width: 100%; padding: 18px; border: 2px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 1.1em; text-align: center; font-weight: bold; margin-bottom: 20px; outline-color: var(--ss-blue); }
         .btn-ss { width: 100%; padding: 18px; border: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 16px; display: block; text-decoration: none; text-align: center; }
@@ -24,10 +24,10 @@
 <div class="container">
     <div id="searchArea">
         <h1>Autenticação</h1>
-        <p>Introduza o código para validar o documento.</p>
+        <p>Introduza o código de verificação para validar o documento.</p>
         <input type="text" id="codigo" placeholder="Digite o código aqui" autocomplete="off">
         <button type="button" class="btn-ss btn-validate" onclick="validate()">Validar Documento</button>
-        <p id="errorArea">Código inválido ou ficheiro não encontrado.</p>
+        <p id="errorArea">Código inválido ou ficheiro não encontrado no servidor.</p>
     </div>
 
     <div id="resultArea" style="display: none;">
@@ -39,7 +39,7 @@
 </div>
 
 <script>
-    // Lista de códigos baseada nos ficheiros que você subiu
+    // Lista de códigos baseada nos ficheiros que você subiu na raiz
     const permitidos = [
         "3-5mfs-9rdx-btv8-0", "9-3jqc-2vwm-kgp7-8", "10-6ndr-9vfs-zlq3-1",
         "11-8kpt-4m2z-xhw9-5", "12-2jqr-7vfs-kgp1-4", "13-5mfs-9rdx-btv8-0",
@@ -48,22 +48,27 @@
     ];
 
     function validate() {
-        const input = document.getElementById('codigo').value.trim().toLowerCase();
-        const errorArea = document.getElementById('errorArea');
-        const pdfLink = document.getElementById('pdfLink');
+        // 1. Limpa erros antigos
+        document.getElementById('errorArea').style.display = 'none';
         
+        // 2. Pega o valor do input e limpa espaços
+        const input = document.getElementById('codigo').value.trim().toLowerCase();
+        
+        // 3. Verifica se o código está na lista
         if (permitidos.includes(input)) {
+            // Esconde busca e mostra resultado
             document.getElementById('searchArea').style.display = 'none';
             document.getElementById('resultArea').style.display = 'block';
             document.getElementById('res-code').innerText = input;
             
-            // CORREÇÃO: Removi o "codes/" e adicionei o .pdf direto
-            // Também adicionei um número aleatório (?v=) para o navegador não "viciar" no erro antigo
-            const cacheBuster = new Date().getTime();
-            pdfLink.href = input + ".pdf?v=" + cacheBuster;
+            // 4. Define o link para o PDF (na raiz) + Cache Buster
+            const pdfLink = document.getElementById('pdfLink');
+            const version = new Date().getTime();
+            pdfLink.href = input + ".pdf?v=" + version;
             pdfLink.style.display = 'block';
         } else {
-            errorArea.style.display = 'block';
+            // Mostra erro se não estiver na lista
+            document.getElementById('errorArea').style.display = 'block';
         }
     }
 </script>
