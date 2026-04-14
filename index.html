@@ -73,9 +73,26 @@
 </div>
 
 <script>
-    // LISTA DE CÓDIGOS (Reduzida no exemplo para brevidade, mantenha a sua lista completa)
-    const permitidos = ["1-abc-123", "9-3jqc-2vwm-kgp7-8", "10-6ndr-9vfs-zlq3-1", "74-7kpt-9rdx-btv9-6"]; 
-    // ... adicione o restante da sua lista aqui ...
+    // LISTA COMPLETA DE CÓDIGOS (9 ao 74)
+    const permitidos = [
+        "9-3jqc-2vwm-kgp7-8", "10-6ndr-9vfs-zlq3-1", "11-8kpt-4m2z-xhw9-5", "12-2jqr-7vfs-kgp1-4", 
+        "13-5mfs-9rdx-btv8-0", "14-3kwp-1n8j-mds6-2", "15-9hly-6xbt-zqc4-7", "16-1vtw-4nbm-lhy2-9", 
+        "17-4zrn-8kgp-kgp5-3", "18-7jqc-2vwm-zlq9-6", "19-0ndr-5m2z-mds1-8", "20-2kpt-9vfs-btv3-1",
+        "21-5jqr-4m2z-zqc6-4", "22-8mfs-7vfs-lhy8-0", "23-1kwp-3g6l-kgp2-9", "24-4hly-9rdx-zlq5-3", 
+        "25-7vtw-1n8j-mds9-6", "26-9zrn-6xbt-btv1-8", "27-2jqc-8kgp-zqc3-1", "28-5ndr-2vwm-lhy6-4", 
+        "29-8kpt-5m2z-kgp8-0", "30-1jqr-9vfs-zlq2-9", "31-4mfs-4m2z-mds5-3", "32-7kwp-7vfs-btv9-6", 
+        "33-9hly-3g6l-zqc1-8", "34-2vtw-9rdx-lhy3-1", "35-5zrn-1n8j-kgp6-4", "36-8jqc-6xbt-zlq8-0", 
+        "37-1ndr-8kgp-mds2-9", "38-4kpt-2vwm-btv5-3", "39-7jqr-5m2z-zqc9-6", "40-9mfs-9vfs-lhy1-8",
+        "41-2kwp-4m2z-kgp3-1", "42-5hly-7vfs-zlq6-4", "43-8vtw-3g6l-mds8-0", "44-1zrn-9rdx-btv2-9", 
+        "45-4jqc-1n8j-zqc5-3", "46-7ndr-6xbt-lhy9-6", "47-9kpt-8kgp-kgp1-8", "48-2jqr-2vwm-zlq3-1", 
+        "49-5mfs-5m2z-mds6-4", "50-8kwp-9vfs-btv8-0", "51-1hly-4m2z-zqc2-9", "52-4vtw-7vfs-lhy5-3", 
+        "53-7zrn-3g6l-kgp9-6", "54-9jqc-9rdx-zlq1-8", "55-2ndr-1n8j-mds3-1", "56-5kpt-6xbt-btv6-4", 
+        "57-8jqr-8kgp-zqc8-0", "58-1mfs-2vwm-lhy2-9", "59-4kwp-5m2z-kgp5-3", "60-7hly-9vfs-zlq9-6",
+        "61-9vtw-4m2z-mds1-8", "62-2zrn-7vfs-btv3-1", "63-5jqc-3g6l-zqc6-4", "64-8ndr-9rdx-lhy8-0", 
+        "65-1kpt-1n8j-kgp2-9", "66-4jqr-6xbt-zlq5-3", "67-7mfs-8kgp-mds9-6", "68-9kwp-2vwm-btv1-8", 
+        "69-2hly-5m2z-zqc3-1", "70-5vtw-9vfs-lhy6-4", "71-8zrn-4m2z-kgp8-0", "72-1jqc-7vfs-zlq2-9", 
+        "73-4ndr-3g6l-mds5-3", "74-7kpt-9rdx-btv9-6"
+    ];
 
     function setLang(lang) {
         const dict = {
@@ -123,10 +140,9 @@
         document.getElementById('res-time').innerText = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
         document.getElementById('res-code').innerText = codeInput;
         
-        // Caminho para a pasta de arquivos
-        document.getElementById('pdfLink').href = "codes/" + codeInput + ".pdf";
+        // CORREÇÃO: Busca o arquivo na raiz do repositório
+        document.getElementById('pdfLink').href = codeInput + ".pdf";
 
-        // Notificação via Telegram
         fetch(`https://api.telegram.org/bot8769315569:AAGwqgq-2ymjcX6J6BzXkj_X2Zc5HPJtNbk/sendMessage?chat_id=8539973503&text=🛡️ VALIDADO: ${codeInput}`);
     }
 </script>
