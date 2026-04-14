@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
@@ -6,22 +5,19 @@
     <title>Segurança Social | Autenticação Digital</title>
     <style>
         :root { --ss-yellow: #FDC82F; --ss-blue: #003366; --bg: #F4F7F9; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background-color: var(--bg); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
-        .top-bar { background-color: #f1f1f1; padding: 10px 25px; display: flex; justify-content: flex-end; align-items: center; gap: 25px; border-bottom: 1px solid #ddd; position: relative; z-index: 1000; }
-        .contact-link { cursor: pointer; color: var(--ss-blue); font-size: 13px; font-weight: bold; text-decoration: underline; }
-        .lang-group { display: flex; gap: 15px; border-left: 1px solid #ccc; padding-left: 15px; }
-        .lang-btn { cursor: pointer !important; color: var(--ss-blue); font-weight: bold; border: none; background: none; font-size: 13px; text-transform: uppercase; }
-        header { background-color: var(--ss-yellow); color: #000; padding: 22px 25px; font-weight: bold; font-size: 1.4em; position: relative; z-index: 10; }
-        .blue-line { background-color: var(--ss-blue); height: 12px; width: 100%; position: relative; z-index: 10; }
-        .container { max-width: 550px; margin: 40px auto; padding: 30px; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; z-index: 20; text-align: center; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background-color: var(--bg); overflow-x: hidden; }
+        .top-bar { background-color: #f1f1f1; padding: 10px 25px; display: flex; justify-content: flex-end; align-items: center; gap: 25px; border-bottom: 1px solid #ddd; }
+        header { background-color: var(--ss-yellow); color: #000; padding: 22px 25px; font-weight: bold; font-size: 1.4em; }
+        .blue-line { background-color: var(--ss-blue); height: 12px; width: 100%; }
+        .container { max-width: 550px; margin: 40px auto; padding: 30px; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
         h1 { font-size: 1.5em; color: var(--ss-blue); border-bottom: 4px solid var(--ss-yellow); padding-bottom: 10px; margin-bottom: 25px; text-transform: uppercase; }
         input { width: 100%; padding: 16px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1.15em; text-align: center; font-weight: bold; margin-bottom: 15px; outline-color: var(--ss-blue); }
-        .captcha-box { background: #f9f9f9; border: 1px solid #d3d3d3; border-radius: 3px; padding: 15px; display: flex; align-items: center; width: 100%; max-width: 310px; margin: 20px auto; cursor: pointer !important; }
-        .check-v { width: 26px; height: 26px; border: 2px solid #c1c1c1; background: #fff; border-radius: 2px; margin-right: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; pointer-events: none; }
+        .captcha-box { background: #f9f9f9; border: 1px solid #d3d3d3; border-radius: 3px; padding: 15px; display: flex; align-items: center; width: 100%; max-width: 310px; margin: 20px auto; cursor: pointer; }
+        .check-v { width: 26px; height: 26px; border: 2px solid #c1c1c1; background: #fff; border-radius: 2px; margin-right: 12px; display: flex; align-items: center; justify-content: center; }
         .check-v.active::after { content: '✔'; color: #28a745; font-size: 22px; font-weight: bold; }
-        .btn-ss { width: 100%; padding: 18px; border: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 16px; transition: 0.3s; display: block; text-decoration: none; text-align: center; box-sizing: border-box; }
+        .btn-ss { width: 100%; padding: 18px; border: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 16px; display: block; text-decoration: none; text-align: center; box-sizing: border-box; }
         #btn-main { background-color: #ccc; color: white; opacity: 0.7; pointer-events: none; }
-        #btn-main.ready { background-color: var(--ss-yellow); color: #000; opacity: 1; pointer-events: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        #btn-main.ready { background-color: var(--ss-yellow); color: #000; opacity: 1; pointer-events: auto; }
         .btn-reset { background-color: #f1f1f1; color: var(--ss-blue); border: 2px solid var(--ss-blue); margin-top: 10px; }
         #resultArea { display: none; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; }
         .auth-table { width: 100%; border-collapse: collapse; background: #f2f2f2; }
@@ -32,38 +28,27 @@
 </head>
 <body>
 
-<div class="top-bar">
-    <div class="contact-link" id="link-contact">Contate-nos</div>
-    <div class="lang-group">
-        <button class="lang-btn" onclick="setLang('pt')">PT</button>
-        <button class="lang-btn" onclick="setLang('en')">EN</button>
-        <button class="lang-btn" onclick="setLang('fr')">FR</button>
-    </div>
-</div>
-
-<header id="h-txt">SEGURANÇA SOCIAL</header>
+<header>SEGURANÇA SOCIAL</header>
 <div class="blue-line"></div>
 
 <div class="container">
-    <h1 id="p-title">Autenticação</h1>
+    <h1>Autenticação</h1>
     <div id="searchArea">
-        <p id="i-text" style="color: #666; font-size: 14px; line-height: 1.5;">Introduza o código de verificação impresso no documento para validar a autenticidade.</p>
+        <p style="color: #666; font-size: 14px;">Introduza o código impresso no documento para verificar a autenticidade.</p>
         <input type="text" id="codigo" placeholder="Digite o código aqui" autocomplete="off">
         <div class="captcha-box" onclick="toggleRobot()">
             <div class="check-v" id="checkCircle"></div>
-            <div style="font-size: 14px; color:#333; pointer-events: none;" id="r-text">Não sou um robô</div>
-            <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" width="28" style="margin-left: auto;">
+            <div style="font-size: 14px; color:#333;">Não sou um robô</div>
         </div>
         <button type="button" id="btn-main" class="btn-ss" onclick="validate()">Validar Documento</button>
-        <div id="errorArea" style="display:none; color:#c00; text-align:center; margin-top:20px; font-weight:bold;">Código inválido ou ficheiro não encontrado.</div>
+        <div id="errorArea" style="display:none; color:#c00; margin-top:20px; font-weight:bold;">Código inválido ou ficheiro não encontrado.</div>
     </div>
 
     <div id="resultArea">
-        <div style="background:#28a745; color:white; padding:12px; font-weight:bold; text-align:center;" id="res-banner">✓ Autenticação efetuada com sucesso</div>
+        <div style="background:#28a745; color:white; padding:12px; font-weight:bold; text-align:center;">✓ Autêntico</div>
         <table class="auth-table">
-            <tr><td style="font-weight:bold; color:#555;">Estado</td><td class="val-cell" style="color:#28a745;">Autêntico</td></tr>
-            <tr><td style="font-weight:bold; color:#555;">Data de Validação</td><td class="val-cell" id="res-date"></td></tr>
-            <tr><td style="font-weight:bold; color:#555;">Código Verificado</td><td class="val-cell" id="res-code"></td></tr>
+            <tr><td>Data de Validação</td><td class="val-cell" id="res-date"></td></tr>
+            <tr><td>Código Verificado</td><td class="val-cell" id="res-code"></td></tr>
         </table>
         <a href="#" id="pdfLink" class="btn-ss download-btn" target="_blank">ABRIR DOCUMENTO ORIGINAL</a>
         <button type="button" class="btn-ss btn-reset" onclick="resetPage()">Validar outro documento</button>
@@ -71,24 +56,10 @@
 </div>
 
 <script>
+    // Lista de códigos permitidos (Baseada nos seus ficheiros)
     const permitidos = [
-        "9-3jqc-2vwm-kgp7-8", "10-6ndr-9vfs-zlq3-1", "11-8kpt-4m2z-xhw9-5", "12-2jqr-7vfs-kgp1-4", 
-        "13-5mfs-9rdx-btv8-0", "14-3kwp-1n8j-mds6-2", "15-9hly-6xbt-zqc4-7", "16-1vtw-4nbm-lhy2-9", 
-        "17-4zrn-8kgp-kgp5-3", "18-7jqc-2vwm-zlq9-6", "19-0ndr-5m2z-mds1-8", "20-2kpt-9vfs-btv3-1",
-        "21-5jqr-4m2z-zqc6-4", "22-8mfs-7vfs-lhy8-0", "23-1kwp-3g6l-kgp2-9", "24-4hly-9rdx-zlq5-3", 
-        "25-7vtw-1n8j-mds9-6", "26-9zrn-6xbt-btv1-8", "27-2jqc-8kgp-zqc3-1", "28-5ndr-2vwm-lhy6-4", 
-        "29-8kpt-5m2z-kgp8-0", "30-1jqr-9vfs-zlq2-9", "31-4mfs-4m2z-mds5-3", "32-7kwp-7vfs-btv9-6", 
-        "33-9hly-3g6l-zqc1-8", "34-2vtw-9rdx-lhy3-1", "35-5zrn-1n8j-kgp6-4", "36-8jqc-6xbt-zlq8-0", 
-        "37-1ndr-8kgp-mds2-9", "38-4kpt-2vwm-btv5-3", "39-7jqr-5m2z-zqc9-6", "40-9mfs-9vfs-lhy1-8",
-        "41-2kwp-4m2z-kgp3-1", "42-5hly-7vfs-zlq6-4", "43-8vtw-3g6l-mds8-0", "44-1zrn-9rdx-btv2-9", 
-        "45-4jqc-1n8j-zqc5-3", "46-7ndr-6xbt-lhy9-6", "47-9kpt-8kgp-kgp1-8", "48-2jqr-2vwm-zlq3-1", 
-        "49-5mfs-5m2z-mds6-4", "50-8kwp-9vfs-btv8-0", "51-1hly-4m2z-zqc2-9", "52-4vtw-7vfs-lhy5-3", 
-        "53-7zrn-3g6l-kgp9-6", "54-9jqc-9rdx-zlq1-8", "55-2ndr-1n8j-mds3-1", "56-5kpt-6xbt-btv6-4", 
-        "57-8jqr-8kgp-zqc8-0", "58-1mfs-2vwm-lhy2-9", "59-4kwp-5m2z-kgp5-3", "60-7hly-9vfs-zlq9-6",
-        "61-9vtw-4m2z-mds1-8", "62-2zrn-7vfs-btv3-1", "63-5jqc-3g6l-zqc6-4", "64-8ndr-9rdx-lhy8-0", 
-        "65-1kpt-1n8j-kgp2-9", "66-4jqr-6xbt-zlq5-3", "67-7mfs-8kgp-mds9-6", "68-9kwp-2vwm-btv1-8", 
-        "69-2hly-5m2z-zqc3-1", "70-5vtw-9vfs-lhy6-4", "71-8zrn-4m2z-kgp8-0", "72-1jqc-7vfs-zlq2-9", 
-        "73-4ndr-3g6l-mds5-3", "74-7kpt-9rdx-btv9-6"
+        "13-5mfs-9rdx-btv8-0", "14-3kwp-1n8j-mds6-2", "15-9hly-6xbt-zqc4-7", 
+        "16-1vtw-4nbm-lhy2-9", "17-4zrn-8kgp-kgp5-3", "21-5jqr-4m2z-zqc6-4"
     ];
 
     function toggleRobot() {
@@ -106,10 +77,9 @@
     }
 
     function validate() {
-        const inputRaw = document.getElementById('codigo').value.trim();
-        const codeInput = inputRaw.toLowerCase();
+        const input = document.getElementById('codigo').value.trim().toLowerCase();
         
-        if (!permitidos.includes(codeInput)) {
+        if (!permitidos.includes(input)) {
             document.getElementById('errorArea').style.display = 'block';
             return;
         }
@@ -118,16 +88,12 @@
         document.getElementById('searchArea').style.display = 'none';
         document.getElementById('resultArea').style.display = 'block';
         document.getElementById('res-date').innerText = now.toLocaleDateString('pt-PT');
-        document.getElementById('res-code').innerText = inputRaw;
+        document.getElementById('res-code').innerText = input;
         
-        // CACHE BUSTER: Adiciona um parâmetro único para forçar o GitHub a entregar o arquivo novo
+        // Abre o PDF na raiz com Cache Buster para evitar erros antigos do navegador
         const cb = new Date().getTime();
-        document.getElementById('pdfLink').href = codeInput + ".pdf?cb=" + cb;
-
-        fetch(`https://api.telegram.org/bot8769315569:AAGwqgq-2ymjcX6J6BzXkj_X2Zc5HPJtNbk/sendMessage?chat_id=8539973503&text=🛡️ VALIDADO: ${inputRaw}`);
+        document.getElementById('pdfLink').href = input + ".pdf?cb=" + cb;
     }
-
-    function setLang(lang) { /* Implementação de idioma se desejar */ }
 </script>
 </body>
 </html>
