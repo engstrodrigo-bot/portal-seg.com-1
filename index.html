@@ -2,19 +2,17 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Segurança Social | Autenticação Digital</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segurança Social | Autenticação</title>
     <style>
-        :root { --ss-yellow: #FDC82F; --ss-blue: #003366; --bg: #F4F7F9; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background-color: var(--bg); overflow-x: hidden; }
-        header { background-color: var(--ss-yellow); color: #000; padding: 25px; font-weight: bold; font-size: 1.5em; text-align: center; border-bottom: 12px solid var(--ss-blue); }
-        .container { max-width: 500px; margin: 40px auto; padding: 30px; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
-        h1 { font-size: 1.4em; color: var(--ss-blue); text-transform: uppercase; margin-bottom: 20px; }
-        input { width: 100%; padding: 18px; border: 2px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 1.1em; text-align: center; font-weight: bold; margin-bottom: 20px; outline-color: var(--ss-blue); }
-        .btn-ss { width: 100%; padding: 18px; border: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 16px; display: block; text-decoration: none; text-align: center; }
+        :root { --ss-yellow: #FDC82F; --ss-blue: #003366; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background-color: #F4F7F9; text-align: center; }
+        header { background-color: var(--ss-yellow); padding: 25px; font-weight: bold; font-size: 1.5em; border-bottom: 12px solid var(--ss-blue); }
+        .container { max-width: 500px; margin: 40px auto; padding: 30px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        input { width: 100%; padding: 18px; border: 2px solid #ddd; border-radius: 4px; font-size: 1.1em; text-align: center; font-weight: bold; margin-bottom: 20px; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 16px; display: block; text-decoration: none; }
         .btn-validate { background-color: var(--ss-yellow); color: #000; }
         .btn-download { background-color: #c00; color: white; margin-top: 20px; display: none; }
-        #errorArea { display: none; color: #c00; font-weight: bold; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -24,48 +22,61 @@
 <div class="container">
     <div id="searchArea">
         <h1>Autenticação</h1>
-        <p>Introduza o código de verificação impresso no documento.</p>
-        <input type="text" id="codigo" placeholder="Digite o código aqui" autocomplete="off">
-        <button type="button" class="btn-ss btn-validate" onclick="validate()">Validar Documento</button>
-        <p id="errorArea">Código inválido ou ficheiro não encontrado no servidor.</p>
+        <p>Introduza o código para validar o documento.</p>
+        <input type="text" id="codigo" placeholder="Digite o código aqui">
+        <button type="button" class="btn btn-validate" onclick="validate()">Validar Documento</button>
+        <p id="errorArea" style="display:none; color: #c00; font-weight: bold; margin-top: 15px;">Código inválido ou ficheiro não encontrado.</p>
     </div>
 
     <div id="resultArea" style="display: none;">
         <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 4px; font-weight: bold; margin-bottom: 20px;">✓ DOCUMENTO AUTÊNTICO</div>
         <p>Código Verificado: <span id="res-code" style="font-weight: bold;"></span></p>
-        <a href="#" id="pdfLink" class="btn-ss btn-download" target="_blank">ABRIR DOCUMENTO ORIGINAL</a>
-        <button onclick="window.location.reload()" style="background:none; border:none; color:blue; cursor:pointer; text-decoration:underline; margin-top:20px;">Validar outro código</button>
+        <a href="#" id="pdfLink" class="btn btn-download" target="_blank">ABRIR DOCUMENTO ORIGINAL</a>
+        <button onclick="window.location.reload()" style="background:none; border:none; color:blue; cursor:pointer; text-decoration:underline; margin-top:20px;">Validar outro</button>
     </div>
 </div>
 
 <script>
-    // Lista de códigos permitidos baseada nos ficheiros que você tem
+    // Lista de códigos (9 ao 74)
     const permitidos = [
-        "3-5mfs-9rdx-btv8-0", "9-3jqc-2vwm-kgp7-8", "10-6ndr-9vfs-zlq3-1",
-        "11-8kpt-4m2z-xhw9-5", "12-2jqr-7vfs-kgp1-4", "13-5mfs-9rdx-btv8-0",
-        "14-3kwp-1n8j-mds6-2", "15-9hly-6xbt-zqc4-7", "16-1vtw-4nbm-lhy2-9",
-        "17-4zrn-8kgp-kgp5-3"
+        "9-3jqc-2vwm-kgp7-8", "10-6ndr-9vfs-zlq3-1", "11-8kpt-4m2z-xhw9-5", "12-2jqr-7vfs-kgp1-4",
+        "13-5mfs-9rdx-btv8-0", "14-3kwp-1n8j-mds6-2", "15-9hly-6xbt-zqc4-7", "16-1vtw-4nbm-lhy2-9",
+        "17-4zrn-8kgp-kgp5-3", "21-5jqr-4m2z-zqc6-4"
     ];
 
-    function validate() {
-        const inputField = document.getElementById('codigo');
-        const codeInput = inputField.value.trim().toLowerCase();
+    async function validate() {
+        const input = document.getElementById('codigo').value.trim().toLowerCase();
         const errorArea = document.getElementById('errorArea');
+        const pdfLink = document.getElementById('pdfLink');
+        
+        if (!permitidos.includes(input)) {
+            errorArea.style.display = 'block';
+            return;
+        }
 
-        if (permitidos.includes(codeInput)) {
-            // Esconde a busca e mostra o resultado
+        // Tenta encontrar o arquivo na raiz (sem a pasta codes/)
+        // Tenta .pdf e .pdf.pdf para garantir que abre
+        let urlFinal = "";
+        const testes = [input + ".pdf", input + ".pdf.pdf"];
+
+        for (let nome of testes) {
+            const check = await fetch(nome, { method: 'HEAD' });
+            if (check.ok) {
+                urlFinal = nome;
+                break;
+            }
+        }
+
+        if (urlFinal !== "") {
             document.getElementById('searchArea').style.display = 'none';
             document.getElementById('resultArea').style.display = 'block';
-            document.getElementById('res-code').innerText = codeInput;
+            document.getElementById('res-code').innerText = input;
             
-            // Define o link do PDF (considerando que estão na raiz)
-            const pdfLink = document.getElementById('pdfLink');
-            // Cache Buster (?v=) para evitar que o navegador mostre erros antigos
-            const version = new Date().getTime();
-            pdfLink.href = codeInput + ".pdf?v=" + version;
+            // Força o navegador a buscar o arquivo novo com um timestamp (?v=)
+            pdfLink.href = urlFinal + "?v=" + new Date().getTime();
             pdfLink.style.display = 'block';
         } else {
-            // Mostra o erro se o código não estiver na lista
+            errorArea.innerText = "Ficheiro não encontrado no servidor. Verifique o nome no GitHub.";
             errorArea.style.display = 'block';
         }
     }
