@@ -10,61 +10,82 @@
         header { background-color: var(--ss-yellow); padding: 25px; font-weight: bold; font-size: 1.5em; border-bottom: 12px solid var(--ss-blue); }
         .container { max-width: 500px; margin: 40px auto; padding: 30px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h1 { font-size: 1.4em; color: var(--ss-blue); text-transform: uppercase; margin-bottom: 20px; }
-        input { width: 100%; padding: 18px; border: 2px solid #ddd; border-radius: 4px; font-size: 1.1em; text-align: center; font-weight: bold; margin-bottom: 20px; outline-color: var(--ss-blue); }
-        .btn { width: 100%; padding: 18px; border: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 16px; display: block; text-decoration: none; }
+        input { width: 100%; padding: 18px; border: 2px solid #ddd; border-radius: 4px; font-size: 1.1em; text-align: center; font-weight: bold; margin-bottom: 20px; outline-color: var(--ss-blue); box-sizing: border-box; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 16px; display: block; text-decoration: none; box-sizing: border-box; }
         .btn-validate { background-color: var(--ss-yellow); color: #000; }
         .btn-download { background-color: #c00; color: white; margin-top: 20px; }
+        .spinner { display: inline-block; width: 18px; height: 18px; border: 3px solid #ccc; border-top-color: var(--ss-blue); border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-
 <header>SEGURANÇA SOCIAL</header>
-
 <div class="container">
     <div id="searchArea">
         <h1>Autenticação</h1>
         <p>Introduza o código para validar o documento.</p>
-        <input type="text" id="codigo" placeholder="Digite o código aqui" autocomplete="off">
+        <input type="text" id="codigo" placeholder="Digite o código aqui" autocomplete="off" onkeydown="if(event.key==='Enter') validate()">
         <button type="button" class="btn btn-validate" onclick="validate()">Validar Documento</button>
-        <p id="errorArea" style="display:none; color: #c00; font-weight: bold; margin-top: 15px;">Código inválido ou não autorizado.</p>
+        <p id="errorArea" style="display:none; color:#c00; font-weight:bold; margin-top:15px;"></p>
     </div>
-
-    <div id="resultArea" style="display: none;">
-        <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 4px; font-weight: bold; margin-bottom: 20px;">✓ DOCUMENTO AUTÊNTICO</div>
-        <p>Código Verificado: <span id="res-code" style="font-weight: bold;"></span></p>
-        
-        <a href="#" id="pdfLink" class="btn btn-download" target="_blank">ABRIR PDF (Opção 1)</a>
-        
-        <a href="#" id="pdfLink2" class="btn btn-download" target="_blank" style="background-color: #555;">ABRIR PDF (Opção 2)</a>
-
+    <div id="loadingArea" style="display:none; padding:40px;">
+        <span class="spinner"></span> A verificar documento...
+    </div>
+    <div id="resultArea" style="display:none;">
+        <div style="background:#d4edda; color:#155724; padding:15px; border-radius:4px; font-weight:bold; margin-bottom:20px;">✓ DOCUMENTO AUTÊNTICO</div>
+        <p>Código Verificado: <span id="res-code" style="font-weight:bold;"></span></p>
+        <a href="#" id="pdfLink" class="btn btn-download" target="_blank">⬇ ABRIR / DESCARREGAR PDF</a>
         <button onclick="window.location.reload()" style="background:none; border:none; color:blue; cursor:pointer; text-decoration:underline; margin-top:20px;">Validar outro código</button>
     </div>
 </div>
-
 <script>
+    // Códigos correspondem EXATAMENTE aos arquivos no repositório
     const permitidos = [
-        "9-3jqc-2vwm-kgp7-8", "10-6ndr-9vfs-zlq3-1", "11-8kpt-4m2z-xhw9-5", "12-2jqr-7vfs-kgp1-4",
-        "13-5mfs-9rdx-btv8-0", "14-3kwp-1n8j-mds6-2", "15-9hly-6xbt-zqc4-7", "16-1vtw-4nbm-lhy2-9",
-        "17-4zrn-8kgp-kgp5-3", "21-5jqr-4m2z-zqc6-4"
+        "13-5mfs-9rdx-btv6-0",
+        "14-3kwp-1n8j-mds6-2",
+        "15-9hly-6xbt-zqc4-7",
+        "16-1vtw-4nbm-lhy2-9",
+        "17-4zrn-8kgp-kgp5-3",
+        "21-5jqr-4m2z-zqc6-4",
+        "4-7mfs-3g6l-hdj8-1",
+        "5-2kwp-9rdx-btv6-3",
+        "6-5hly-4nbm-zqc7-0",
+        "7-1vtw-8kgp-mds4-6",
+        "8-4zrn-6xbt-lhy9-5"
     ];
 
-    function validate() {
+    async function validate() {
         const input = document.getElementById('codigo').value.trim().toLowerCase();
-        
-        if (permitidos.includes(input)) {
-            document.getElementById('searchArea').style.display = 'none';
-            document.getElementById('resultArea').style.display = 'block';
-            document.getElementById('res-code').innerText = input;
-            
-            const version = new Date().getTime();
-            
-            // Link 1: Tenta o padrão normal
-            document.getElementById('pdfLink').href = input + ".pdf?v=" + version;
-            
-            // Link 2: Tenta o padrão duplicado (que aparece no seu GitHub)
-            document.getElementById('pdfLink2').href = input + ".pdf.pdf?v=" + version;
-            
-        } else {
+        document.getElementById('errorArea').style.display = 'none';
+
+        if (!permitidos.includes(input)) {
+            document.getElementById('errorArea').innerText = 'Código inválido ou não autorizado.';
+            document.getElementById('errorArea').style.display = 'block';
+            return;
+        }
+
+        document.getElementById('searchArea').style.display = 'none';
+        document.getElementById('loadingArea').style.display = 'block';
+
+        const pdfUrl = input + ".pdf";
+
+        try {
+            const res = await fetch(pdfUrl, { method: 'HEAD' });
+            document.getElementById('loadingArea').style.display = 'none';
+
+            if (res.ok) {
+                document.getElementById('resultArea').style.display = 'block';
+                document.getElementById('res-code').innerText = input;
+                document.getElementById('pdfLink').href = pdfUrl;
+            } else {
+                document.getElementById('searchArea').style.display = 'block';
+                document.getElementById('errorArea').innerText = '⚠️ Documento em processamento. Tente novamente em alguns minutos.';
+                document.getElementById('errorArea').style.display = 'block';
+            }
+        } catch (e) {
+            document.getElementById('loadingArea').style.display = 'none';
+            document.getElementById('searchArea').style.display = 'block';
+            document.getElementById('errorArea').innerText = 'Erro de ligação. Verifique a sua internet.';
             document.getElementById('errorArea').style.display = 'block';
         }
     }
