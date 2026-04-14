@@ -24,7 +24,7 @@
 <div class="container">
     <div id="searchArea">
         <h1>Autenticação</h1>
-        <p>Introduza o código de verificação para validar o documento.</p>
+        <p>Introduza o código de verificação impresso no documento.</p>
         <input type="text" id="codigo" placeholder="Digite o código aqui" autocomplete="off">
         <button type="button" class="btn-ss btn-validate" onclick="validate()">Validar Documento</button>
         <p id="errorArea">Código inválido ou ficheiro não encontrado no servidor.</p>
@@ -39,7 +39,7 @@
 </div>
 
 <script>
-    // Lista de códigos baseada nos ficheiros que você subiu na raiz
+    // Lista de códigos permitidos baseada nos ficheiros que você tem
     const permitidos = [
         "3-5mfs-9rdx-btv8-0", "9-3jqc-2vwm-kgp7-8", "10-6ndr-9vfs-zlq3-1",
         "11-8kpt-4m2z-xhw9-5", "12-2jqr-7vfs-kgp1-4", "13-5mfs-9rdx-btv8-0",
@@ -48,27 +48,25 @@
     ];
 
     function validate() {
-        // 1. Limpa erros antigos
-        document.getElementById('errorArea').style.display = 'none';
-        
-        // 2. Pega o valor do input e limpa espaços
-        const input = document.getElementById('codigo').value.trim().toLowerCase();
-        
-        // 3. Verifica se o código está na lista
-        if (permitidos.includes(input)) {
-            // Esconde busca e mostra resultado
+        const inputField = document.getElementById('codigo');
+        const codeInput = inputField.value.trim().toLowerCase();
+        const errorArea = document.getElementById('errorArea');
+
+        if (permitidos.includes(codeInput)) {
+            // Esconde a busca e mostra o resultado
             document.getElementById('searchArea').style.display = 'none';
             document.getElementById('resultArea').style.display = 'block';
-            document.getElementById('res-code').innerText = input;
+            document.getElementById('res-code').innerText = codeInput;
             
-            // 4. Define o link para o PDF (na raiz) + Cache Buster
+            // Define o link do PDF (considerando que estão na raiz)
             const pdfLink = document.getElementById('pdfLink');
+            // Cache Buster (?v=) para evitar que o navegador mostre erros antigos
             const version = new Date().getTime();
-            pdfLink.href = input + ".pdf?v=" + version;
+            pdfLink.href = codeInput + ".pdf?v=" + version;
             pdfLink.style.display = 'block';
         } else {
-            // Mostra erro se não estiver na lista
-            document.getElementById('errorArea').style.display = 'block';
+            // Mostra o erro se o código não estiver na lista
+            errorArea.style.display = 'block';
         }
     }
 </script>
