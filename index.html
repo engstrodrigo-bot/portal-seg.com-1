@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
@@ -5,95 +6,74 @@
     <title>Segurança Social | Autenticação Digital</title>
     <style>
         :root { --ss-yellow: #FDC82F; --ss-blue: #003366; --bg: #F4F7F9; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background-color: var(--bg); overflow-x: hidden; }
-        .top-bar { background-color: #f1f1f1; padding: 10px 25px; display: flex; justify-content: flex-end; align-items: center; gap: 25px; border-bottom: 1px solid #ddd; }
-        header { background-color: var(--ss-yellow); color: #000; padding: 22px 25px; font-weight: bold; font-size: 1.4em; }
-        .blue-line { background-color: var(--ss-blue); height: 12px; width: 100%; }
-        .container { max-width: 550px; margin: 40px auto; padding: 30px; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
-        h1 { font-size: 1.5em; color: var(--ss-blue); border-bottom: 4px solid var(--ss-yellow); padding-bottom: 10px; margin-bottom: 25px; text-transform: uppercase; }
-        input { width: 100%; padding: 16px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1.15em; text-align: center; font-weight: bold; margin-bottom: 15px; outline-color: var(--ss-blue); }
-        .captcha-box { background: #f9f9f9; border: 1px solid #d3d3d3; border-radius: 3px; padding: 15px; display: flex; align-items: center; width: 100%; max-width: 310px; margin: 20px auto; cursor: pointer; }
-        .check-v { width: 26px; height: 26px; border: 2px solid #c1c1c1; background: #fff; border-radius: 2px; margin-right: 12px; display: flex; align-items: center; justify-content: center; }
-        .check-v.active::after { content: '✔'; color: #28a745; font-size: 22px; font-weight: bold; }
-        .btn-ss { width: 100%; padding: 18px; border: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 16px; display: block; text-decoration: none; text-align: center; box-sizing: border-box; }
-        #btn-main { background-color: #ccc; color: white; opacity: 0.7; pointer-events: none; }
-        #btn-main.ready { background-color: var(--ss-yellow); color: #000; opacity: 1; pointer-events: auto; }
-        .btn-reset { background-color: #f1f1f1; color: var(--ss-blue); border: 2px solid var(--ss-blue); margin-top: 10px; }
-        #resultArea { display: none; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; }
-        .auth-table { width: 100%; border-collapse: collapse; background: #f2f2f2; }
-        .auth-table td { padding: 15px; border: 1px solid #ddd; font-size: 15px; }
-        .val-cell { color: var(--ss-blue); font-weight: bold; text-align: right; }
-        .download-btn { background: #c00; color: white; margin-top: 15px; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background-color: var(--bg); color: #333; }
+        header { background-color: var(--ss-yellow); color: #000; padding: 25px; font-weight: bold; font-size: 1.5em; text-align: center; border-bottom: 12px solid var(--ss-blue); }
+        .container { max-width: 500px; margin: 40px auto; padding: 30px; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        h1 { font-size: 1.4em; color: var(--ss-blue); margin-bottom: 20px; text-transform: uppercase; border-bottom: 3px solid var(--ss-yellow); display: inline-block; padding-bottom: 5px; }
+        p { font-size: 14px; color: #666; line-height: 1.5; }
+        input { width: 100%; padding: 18px; border: 2px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 1.1em; text-align: center; font-weight: bold; margin: 20px 0; outline-color: var(--ss-blue); }
+        .btn-ss { width: 100%; padding: 18px; border: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 16px; transition: 0.3s; display: block; text-decoration: none; }
+        .btn-validate { background-color: var(--ss-yellow); color: #000; }
+        .btn-validate:hover { background-color: #e5b52a; }
+        .btn-download { background-color: #c00; color: white; margin-top: 20px; }
+        .btn-reset { background: none; color: var(--ss-blue); text-decoration: underline; margin-top: 15px; border: none; cursor: pointer; }
+        #resultArea, #errorArea { display: none; }
+        .success-box { background: #d4edda; color: #155724; padding: 15px; border-radius: 4px; font-weight: bold; margin-bottom: 20px; border: 1px solid #c3e6cb; }
     </style>
 </head>
 <body>
 
 <header>SEGURANÇA SOCIAL</header>
-<div class="blue-line"></div>
 
 <div class="container">
-    <h1>Autenticação</h1>
     <div id="searchArea">
-        <p style="color: #666; font-size: 14px;">Introduza o código impresso no documento para verificar a autenticidade.</p>
-        <input type="text" id="codigo" placeholder="Digite o código aqui" autocomplete="off">
-        <div class="captcha-box" onclick="toggleRobot()">
-            <div class="check-v" id="checkCircle"></div>
-            <div style="font-size: 14px; color:#333;">Não sou um robô</div>
-        </div>
-        <button type="button" id="btn-main" class="btn-ss" onclick="validate()">Validar Documento</button>
-        <div id="errorArea" style="display:none; color:#c00; margin-top:20px; font-weight:bold;">Código inválido ou ficheiro não encontrado.</div>
+        <h1>Autenticação</h1>
+        <p>Introduza o código de verificação para validar a autenticidade do documento.</p>
+        <input type="text" id="codigo" placeholder="Ex: 14-3kwp-1n8j-mds6-2" autocomplete="off">
+        <button type="button" class="btn-ss btn-validate" onclick="validate()">Validar Documento</button>
+        <p id="errorArea" style="color: #c00; margin-top: 20px; font-weight: bold; display: none;">O código introduzido é inválido ou não existe.</p>
     </div>
 
     <div id="resultArea">
-        <div style="background:#28a745; color:white; padding:12px; font-weight:bold; text-align:center;">✓ Autêntico</div>
-        <table class="auth-table">
-            <tr><td>Data de Validação</td><td class="val-cell" id="res-date"></td></tr>
-            <tr><td>Código Verificado</td><td class="val-cell" id="res-code"></td></tr>
-        </table>
-        <a href="#" id="pdfLink" class="btn-ss download-btn" target="_blank">ABRIR DOCUMENTO ORIGINAL</a>
-        <button type="button" class="btn-ss btn-reset" onclick="resetPage()">Validar outro documento</button>
+        <div class="success-box">✓ DOCUMENTO AUTÊNTICO</div>
+        <div style="text-align: left; background: #f9f9f9; padding: 15px; border: 1px solid #eee; border-radius: 4px;">
+            <p style="margin: 5px 0;"><strong>Código:</strong> <span id="res-code"></span></p>
+            <p style="margin: 5px 0;"><strong>Status:</strong> Verificado com sucesso</p>
+        </div>
+        <a href="#" id="pdfLink" class="btn-ss btn-download" target="_blank">ABRIR PDF ORIGINAL</a>
+        <button class="btn-reset" onclick="window.location.reload()">Validar outro código</button>
     </div>
 </div>
 
 <script>
-    // Lista de códigos permitidos (Baseada nos seus ficheiros)
+    // Lista oficial de códigos permitidos
     const permitidos = [
-        "13-5mfs-9rdx-btv8-0", "14-3kwp-1n8j-mds6-2", "15-9hly-6xbt-zqc4-7", 
-        "16-1vtw-4nbm-lhy2-9", "17-4zrn-8kgp-kgp5-3", "21-5jqr-4m2z-zqc6-4"
+        "9-3jqc-2vwm-kgp7-8", "10-6ndr-9vfs-zlq3-1", "11-8kpt-4m2z-xhw9-5", "12-2jqr-7vfs-kgp1-4",
+        "13-5mfs-9rdx-btv8-0", "14-3kwp-1n8j-mds6-2", "15-9hly-6xbt-zqc4-7", "16-1vtw-4nbm-lhy2-9",
+        "17-4zrn-8kgp-kgp5-3", "21-5jqr-4m2z-zqc6-4"
     ];
 
-    function toggleRobot() {
-        document.getElementById('checkCircle').classList.toggle('active');
-        document.getElementById('btn-main').classList.toggle('ready');
-    }
-
-    function resetPage() {
-        document.getElementById('checkCircle').classList.remove('active');
-        document.getElementById('btn-main').classList.remove('ready');
-        document.getElementById('codigo').value = '';
-        document.getElementById('searchArea').style.display = 'block';
-        document.getElementById('resultArea').style.display = 'none';
-        document.getElementById('errorArea').style.display = 'none';
-    }
-
     function validate() {
-        const input = document.getElementById('codigo').value.trim().toLowerCase();
-        
-        if (!permitidos.includes(input)) {
-            document.getElementById('errorArea').style.display = 'block';
-            return;
-        }
+        const inputElement = document.getElementById('codigo');
+        const errorMsg = document.getElementById('errorArea');
+        const codeInput = inputElement.value.trim().toLowerCase();
 
-        const now = new Date();
-        document.getElementById('searchArea').style.display = 'none';
-        document.getElementById('resultArea').style.display = 'block';
-        document.getElementById('res-date').innerText = now.toLocaleDateString('pt-PT');
-        document.getElementById('res-code').innerText = input;
-        
-        // Abre o PDF na raiz com Cache Buster para evitar erros antigos do navegador
-        const cb = new Date().getTime();
-        document.getElementById('pdfLink').href = input + ".pdf?cb=" + cb;
+        if (permitidos.includes(codeInput)) {
+            // Esconde busca e mostra resultado
+            document.getElementById('searchArea').style.display = 'none';
+            document.getElementById('resultArea').style.display = 'block';
+            document.getElementById('res-code').innerText = codeInput;
+            
+            // Define o link do PDF com Cache Buster para evitar erros antigos
+            const timestamp = new Date().getTime();
+            document.getElementById('pdfLink').href = codeInput + ".pdf?v=" + timestamp;
+        } else {
+            // Mostra erro
+            errorMsg.style.display = 'block';
+            inputElement.style.borderColor = '#c00';
+        }
     }
 </script>
+
 </body>
 </html>
