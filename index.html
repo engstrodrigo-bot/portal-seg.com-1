@@ -34,14 +34,14 @@
     <div id="resultArea" style="display:none;">
         <div style="background:#d4edda; color:#155724; padding:15px; border-radius:4px; font-weight:bold; margin-bottom:20px;">✓ DOCUMENTO AUTÊNTICO</div>
         <p>Código Verificado: <span id="res-code" style="font-weight:bold;"></span></p>
-        <a href="#" id="pdfLink" class="btn btn-download" target="_blank">⬇ ABRIR / DESCARREGAR PDF</a>
-        <button onclick="window.location.reload()" style="background:none; border:none; color:blue; cursor:pointer; text-decoration:underline; margin-top:20px;">Validar outro código</button>
+        <a href="#" id="pdfLink" class="btn btn-download" target="_blank">⬇ ABRIR DOCUMENTO ORIGINAL</a>
+        <button onclick="window.location.reload()" style="background:none; border:none; color:blue; cursor:pointer; text-decoration:underline; margin-top:20px; display:block; width:100%; text-align:center;">Validar outro código</button>
     </div>
 </div>
 <script>
-    // Códigos correspondem EXATAMENTE aos arquivos no repositório
+    // Caminho relativo — PDFs estão no mesmo repositório/domínio
     const permitidos = [
-        "13-5mfs-9rdx-btv6-0",
+        "13-5mfs-9rdx-btv8-0",
         "14-3kwp-1n8j-mds6-2",
         "15-9hly-6xbt-zqc4-7",
         "16-1vtw-4nbm-lhy2-9",
@@ -67,6 +67,7 @@
         document.getElementById('searchArea').style.display = 'none';
         document.getElementById('loadingArea').style.display = 'block';
 
+        // Caminho relativo — funciona direto pois PDFs estão no mesmo domínio
         const pdfUrl = input + ".pdf";
 
         try {
