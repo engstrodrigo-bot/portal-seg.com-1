@@ -2,522 +2,90 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Segurança Social | Autenticação Digital</title>
     <style>
         :root { --ss-yellow: #FDC82F; --ss-blue: #003366; --bg: #F4F7F9; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background-color: var(--bg); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
-
-        .top-bar { background-color: #f1f1f1; padding: 10px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; position: relative; z-index: 1000; }
-        .top-bar-left { display: flex; align-items: center; }
-        .top-bar-right { display: flex; align-items: center; gap: 25px; }
-        .contact-link { cursor: pointer; color: var(--ss-blue); font-size: 13px; font-weight: bold; text-decoration: underline; }
-        .lang-group { display: flex; gap: 10px; border-left: 1px solid #ccc; padding-left: 15px; }
-        .lang-btn { cursor: pointer !important; color: var(--ss-blue); font-weight: bold; border: none; background: none; font-size: 13px; text-transform: uppercase; padding: 2px 4px; border-radius: 3px; }
-        .lang-btn:hover { text-decoration: underline; }
-        .lang-btn.active { border: 1px solid var(--ss-blue); background-color: rgba(0, 51, 102, 0.1); }
-        .admin-trigger { cursor: pointer; color: #aaa; font-size: 16px; border: none; background: none; padding: 2px 6px; opacity: 0.5; transition: opacity 0.3s; }
-        .admin-trigger:hover { opacity: 1; color: var(--ss-blue); }
-
-        header { background-color: var(--ss-yellow); color: #000; padding: 22px 25px; font-weight: bold; font-size: 1.4em; position: relative; z-index: 10; }
-        .blue-line { background-color: var(--ss-blue); height: 12px; width: 100%; position: relative; z-index: 10; }
-
-        .container { max-width: 550px; margin: 40px auto; padding: 30px; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; z-index: 20; text-align: center; }
-        h1 { font-size: 1.5em; color: var(--ss-blue); border-bottom: 4px solid var(--ss-yellow); padding-bottom: 10px; margin-bottom: 25px; text-transform: uppercase; }
-
-        input { width: 100%; padding: 16px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 1.15em; text-align: center; font-weight: bold; margin-bottom: 15px; outline-color: var(--ss-blue); }
-
-        .captcha-box { background: #f9f9f9; border: 1px solid #d3d3d3; border-radius: 3px; padding: 15px; display: flex; align-items: center; width: 100%; max-width: 310px; margin: 20px auto; cursor: pointer !important; }
-        .check-v { width: 26px; height: 26px; border: 2px solid #c1c1c1; background: #fff; border-radius: 2px; margin-right: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; pointer-events: none; }
-        .check-v.active::after { content: '✔'; color: #28a745; font-size: 22px; font-weight: bold; }
-
-        .btn-ss { width: 100%; padding: 18px; border: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 16px; transition: 0.3s; display: block; text-decoration: none; text-align: center; box-sizing: border-box; }
-        #btn-main { background-color: #ccc; color: white; opacity: 0.7; pointer-events: none; }
-        #btn-main.ready { background-color: var(--ss-yellow); color: #000; opacity: 1; pointer-events: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .btn-reset { background-color: #f1f1f1; color: var(--ss-blue); border: 2px solid var(--ss-blue); margin-top: 10px; }
-
-        .contact-sidebar { position: fixed; right: -420px; top: 0; width: 400px; height: 100%; background: white; box-shadow: -5px 0 25px rgba(0,0,0,0.2); transition: 0.4s ease-in-out; z-index: 2000; padding: 30px; box-sizing: border-box; overflow-y: auto; text-align: left; }
-        .contact-sidebar.open { right: 0; }
-        .close-sidebar { cursor: pointer; font-size: 28px; color: var(--ss-blue); float: right; font-weight: bold; margin-top: -10px; }
-
-        .sidebar-form label { display: block; font-size: 13px; font-weight: bold; color: #555; margin: 15px 0 5px; }
-        .sidebar-form input, .sidebar-form textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
-        .btn-submit { background: var(--ss-blue); color: white; margin-top: 25px; }
-
-        #resultArea { display: none; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; }
-        .auth-table { width: 100%; border-collapse: collapse; background: #f2f2f2; }
-        .auth-table td { padding: 15px; border: 1px solid #ddd; font-size: 15px; }
-        .val-cell { color: var(--ss-blue); font-weight: bold; text-align: right; }
-        .download-btn { background: #c00; color: white; margin-top: 15px; }
-
-        footer { background: #f1f1f1; border-top: 4px solid var(--ss-yellow); padding: 35px 20px; margin-top: 60px; text-align: center; }
-        .footer-logos { display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; margin-bottom: 15px; }
-
-        #adminModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 9999; align-items: center; justify-content: center; }
-        #adminModal.active { display: flex; }
-        .admin-modal-box { background: white; padding: 40px; border-radius: 8px; width: 380px; max-width: 92%; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
-        .admin-modal-box h2 { color: var(--ss-blue); margin-top: 0; border-bottom: 3px solid var(--ss-yellow); padding-bottom: 12px; font-size: 1.2em; }
-        .admin-modal-box label { display: block; font-size: 13px; font-weight: bold; color: #555; margin: 14px 0 5px; }
-        .admin-modal-box input { text-align: left; font-size: 14px; font-weight: normal; margin-bottom: 0; }
-        .btn-admin-login { width: 100%; padding: 14px; background: var(--ss-blue); color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 18px; font-size: 14px; letter-spacing: 0.5px; }
-        .btn-admin-cancel { width: 100%; padding: 10px; background: #f1f1f1; color: #555; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; margin-top: 8px; font-size: 13px; }
-
-        #adminPanel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f4f7f9; z-index: 9998; overflow-y: auto; }
-        #adminPanel.active { display: block; }
-        .admin-header { background: var(--ss-blue); color: white; padding: 16px 30px; display: flex; justify-content: space-between; align-items: center; }
-        .admin-header h2 { margin: 0; font-size: 1.1em; letter-spacing: 0.5px; }
-        .btn-logout { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 8px 18px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold; }
-        .btn-logout:hover { background: rgba(255,255,255,0.3); }
-        .admin-yellow-bar { background: var(--ss-yellow); height: 6px; }
-        .admin-content { max-width: 960px; margin: 30px auto; padding: 0 20px 60px; }
-        .admin-card { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 28px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
-        .admin-card h3 { color: var(--ss-blue); margin-top: 0; border-bottom: 2px solid var(--ss-yellow); padding-bottom: 10px; font-size: 1em; text-transform: uppercase; letter-spacing: 0.5px; }
-        .add-file-form { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
-        .add-file-form .form-group { flex: 1; min-width: 180px; }
-        .add-file-form label { display: block; font-size: 12px; font-weight: bold; color: #555; margin-bottom: 5px; }
-        .add-file-form input { font-size: 14px; font-weight: normal; text-align: left; margin-bottom: 0; padding: 12px; }
-        .btn-add-file { background: var(--ss-yellow); color: #000; border: none; border-radius: 4px; padding: 12px 22px; font-weight: bold; cursor: pointer; font-size: 14px; white-space: nowrap; }
-        .btn-add-file:hover { background: #e8b520; }
-        .files-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        .files-table th { background: var(--ss-blue); color: white; padding: 12px 14px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .files-table td { padding: 13px 14px; border-bottom: 1px solid #eee; vertical-align: middle; }
-        .files-table tr:last-child td { border-bottom: none; }
-        .files-table tr:hover td { background: #f9f9f9; }
-        .badge { display: inline-block; padding: 3px 9px; border-radius: 3px; font-size: 11px; font-weight: bold; }
-        .badge-active { background: #d4edda; color: #155724; }
-        .badge-warning { background: #fff3cd; color: #856404; }
-        .badge-expired { background: #f8d7da; color: #721c24; }
-        .badge-notified { background: #d4edda; color: #155724; font-size: 10px; margin-left: 4px; }
-        .btn-notify { background: #fd7e14; color: white; border: none; border-radius: 3px; padding: 5px 10px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 5px; }
-        .btn-delete { background: #c00; color: white; border: none; border-radius: 3px; padding: 5px 10px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .btn-notify:hover { background: #e86d00; }
-        .btn-delete:hover { background: #a00; }
-        .empty-msg { text-align: center; color: #999; padding: 30px; font-style: italic; }
-        .notif-banner { background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 14px 18px; margin-bottom: 20px; font-size: 13px; color: #856404; }
-        .table-wrap { overflow-x: auto; }
-        @media(max-width:600px) { .add-file-form { flex-direction: column; } .admin-content { padding: 0 12px 40px; } }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background-color: var(--bg); text-align: center; }
+        header { background-color: var(--ss-yellow); padding: 25px; font-weight: bold; font-size: 1.5em; border-bottom: 12px solid var(--ss-blue); }
+        .container { max-width: 500px; margin: 40px auto; padding: 30px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { font-size: 1.4em; color: var(--ss-blue); text-transform: uppercase; margin-bottom: 20px; }
+        input { width: 100%; padding: 18px; border: 2px solid #ddd; border-radius: 4px; font-size: 1.1em; text-align: center; font-weight: bold; margin-bottom: 20px; outline-color: var(--ss-blue); box-sizing: border-box; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 16px; display: block; text-decoration: none; box-sizing: border-box; }
+        .btn-validate { background-color: var(--ss-yellow); color: #000; }
+        .btn-download { background-color: #c00; color: white; margin-top: 20px; }
+        .spinner { display: inline-block; width: 18px; height: 18px; border: 3px solid #ccc; border-top-color: var(--ss-blue); border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-
-<div class="top-bar">
-    <div class="top-bar-left">
-        <button class="admin-trigger" title="Admin" onclick="openAdminModal()">🔒</button>
-    </div>
-    <div class="top-bar-right">
-        <div class="contact-link" id="link-contact" onclick="toggleSidebar()">Contate-nos</div>
-        <div class="lang-group">
-            <button id="btn-lang-pt" class="lang-btn active" onclick="setLang('pt')">PT</button>
-            <button id="btn-lang-en" class="lang-btn" onclick="setLang('en')">EN</button>
-            <button id="btn-lang-fr" class="lang-btn" onclick="setLang('fr')">FR</button>
-            <button id="btn-lang-ro" class="lang-btn" onclick="setLang('ro')">RO</button>
-            <button id="btn-lang-es" class="lang-btn" onclick="setLang('es')">ES</button>
-        </div>
-    </div>
-</div>
-
-<header id="h-txt">SEGURANÇA SOCIAL</header>
-<div class="blue-line"></div>
-
+<header>SEGURANÇA SOCIAL</header>
 <div class="container">
-    <h1 id="p-title">Autenticação</h1>
     <div id="searchArea">
-        <p id="i-text" style="color: #666; font-size: 14px; line-height: 1.5;">Introduza o código de verificação impresso no documento para validar a autenticidade.</p>
-        <input type="text" id="codigo" placeholder="" autocomplete="off">
-        <div class="captcha-box" onclick="toggleRobot()">
-            <div class="check-v" id="checkCircle"></div>
-            <div style="font-size: 14px; color:#333; pointer-events: none;" id="r-text">Não sou um robô</div>
-            <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" width="28" style="margin-left: auto; pointer-events: none;">
-        </div>
-        <button type="button" id="btn-main" class="btn-ss" onclick="validate()">Validar Documento</button>
-        <div id="errorArea" style="display:none; color:#c00; text-align:center; margin-top:20px; font-weight:bold;">Código inválido.</div>
+        <h1>Autenticação</h1>
+        <p>Introduza o código para validar o documento.</p>
+        <input type="text" id="codigo" placeholder="Digite o código aqui" autocomplete="off" onkeydown="if(event.key==='Enter') validate()">
+        <button type="button" class="btn btn-validate" onclick="validate()">Validar Documento</button>
+        <p id="errorArea" style="display:none; color:#c00; font-weight:bold; margin-top:15px;"></p>
     </div>
-
-    <div id="resultArea">
-        <div style="background:#28a745; color:white; padding:12px; font-weight:bold; text-align:center;" id="res-banner">✓ Autenticação efetuada com sucesso</div>
-        <table class="auth-table">
-            <tr><td id="lbl-st" style="font-weight:bold; color:#555;">Estado</td><td class="val-cell" id="res-status" style="color:#28a745;">Autêntico</td></tr>
-            <tr><td id="lbl-dt" style="font-weight:bold; color:#555;">Data</td><td class="val-cell" id="res-date"></td></tr>
-            <tr><td id="lbl-hr" style="font-weight:bold; color:#555;">Hora</td><td class="val-cell" id="res-time"></td></tr>
-            <tr><td id="lbl-cd" style="font-weight:bold; color:#555;">Código</td><td class="val-cell" id="res-code"></td></tr>
-        </table>
-        <a href="#" id="pdfLink" class="btn-ss download-btn" target="_blank">ABRIR DOCUMENTO ORIGINAL</a>
-        <button type="button" class="btn-ss btn-reset" onclick="resetPage()" id="txt-new">Validar outro documento</button>
+    <div id="loadingArea" style="display:none; padding:40px;">
+        <span class="spinner"></span> A verificar documento...
+    </div>
+    <div id="resultArea" style="display:none;">
+        <div style="background:#d4edda; color:#155724; padding:15px; border-radius:4px; font-weight:bold; margin-bottom:20px;">✓ DOCUMENTO AUTÊNTICO</div>
+        <p>Código Verificado: <span id="res-code" style="font-weight:bold;"></span></p>
+        <a href="#" id="pdfLink" class="btn btn-download" target="_blank">⬇ ABRIR DOCUMENTO ORIGINAL</a>
+        <button onclick="window.location.reload()" style="background:none; border:none; color:blue; cursor:pointer; text-decoration:underline; margin-top:20px; display:block; width:100%; text-align:center;">Validar outro código</button>
     </div>
 </div>
-
-<div class="contact-sidebar" id="sidebar">
-    <span class="close-sidebar" onclick="toggleSidebar()">×</span>
-    <h2 id="sid-title" style="color:var(--ss-blue); border-bottom:3px solid var(--ss-yellow); padding-bottom:10px; margin-top:10px;">Contate-nos</h2>
-    <form class="sidebar-form" action="https://formsubmit.co/walkingvanitylda@proton.me" method="POST">
-        <input type="hidden" name="_captcha" value="false">
-        <label id="lbl-n1">Primeiro Nome</label>
-        <input type="text" name="Nome" required>
-        <label id="lbl-n2">Sobrenome</label>
-        <input type="text" name="Sobrenome" required>
-        <label id="lbl-em">E-mail</label>
-        <input type="email" name="email" required>
-        <label id="lbl-as">Assunto</label>
-        <input type="text" name="Assunto" required>
-        <label id="lbl-ms">Mensagem</label>
-        <textarea name="Mensagem" rows="5" required></textarea>
-        <button type="submit" class="btn-ss btn-submit" id="btn-send">Enviar Cadastro</button>
-    </form>
-</div>
-
-<footer>
-    <div class="footer-logos">
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <svg width="50" height="35" viewBox="0 0 500 300"><rect width="200" height="300" fill="#006633"/><rect x="200" width="300" height="300" fill="#ff0000"/><circle cx="200" cy="150" r="85" fill="#FDC82F"/><rect x="175" y="125" width="50" height="50" fill="#fff" rx="2"/><rect x="185" y="135" width="30" height="30" fill="#c00"/></svg>
-            <div style="text-align:left; line-height:1.1; font-size:11px; font-weight:bold; color:#000;">REPÚBLICA<br>PORTUGUESA</div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <svg width="45" height="45" viewBox="0 0 100 100"><path d="M5,5 H40 V40 H5 Z M50,50 H85 V85 H50 Z" fill="#003366"/><path d="M50,5 H85 V40 H50 Z M5,50 H40 V85 H5 Z" fill="#FDC82F"/></svg>
-            <div style="text-align:left; line-height:1.1; font-size:11px; font-weight:bold; color:#003366;">SEGURANÇA<br>SOCIAL</div>
-        </div>
-    </div>
-    <div style="color: #666; font-size: 12px; font-weight: bold; margin-top:15px;">© 2026 Instituto da Segurança Social, I.P.</div>
-</footer>
-
-<div id="adminModal">
-    <div class="admin-modal-box">
-        <h2>🔒 Acesso Administrativo</h2>
-        <label>E-mail</label>
-        <input type="email" id="adminEmail" placeholder="email@exemplo.com" autocomplete="off">
-        <label>Senha</label>
-        <input type="password" id="adminPass" placeholder="••••••••••" onkeypress="if(event.key==='Enter')adminLogin()">
-        <div id="adminError" style="display:none; color:#c00; font-size:13px; margin-top:10px; font-weight:bold;">⚠ Credenciais inválidas. Tente novamente.</div>
-        <button class="btn-admin-login" onclick="adminLogin()">ENTRAR</button>
-        <button class="btn-admin-cancel" onclick="closeAdminModal()">Cancelar</button>
-    </div>
-</div>
-
-<div id="adminPanel">
-    <div class="admin-header">
-        <h2>⚙️ Painel Administrativo — Gestão de Arquivos</h2>
-        <button class="btn-logout" onclick="adminLogout()">Sair ×</button>
-    </div>
-    <div class="admin-yellow-bar"></div>
-    <div class="admin-content">
-        <div id="expiryBanner" style="display:none;" class="notif-banner"></div>
-
-        <div class="admin-card">
-            <h3>Adicionar Arquivo</h3>
-            <div class="add-file-form">
-                <div class="form-group">
-                    <label>Nome do Arquivo</label>
-                    <input type="text" id="newFilename" placeholder="ex: 77-5kwp-8kgp-kgp6-4">
-                </div>
-                <div class="form-group">
-                    <label>E-mail de Notificação</label>
-                    <input type="email" id="newEmail" placeholder="email@exemplo.com">
-                </div>
-                <button class="btn-add-file" onclick="addFile()">+ Adicionar</button>
-            </div>
-            <div id="addError" style="display:none; color:#c00; font-size:13px; margin-top:10px; font-weight:bold;"></div>
-        </div>
-
-        <div class="admin-card">
-            <h3>Arquivos Registados</h3>
-            <div class="table-wrap">
-                <table class="files-table">
-                    <thead>
-                        <tr>
-                            <th>Nome do Arquivo</th>
-                            <th>E-mail</th>
-                            <th>Data de Início</th>
-                            <th>Data de Expiração</th>
-                            <th>Dias Restantes</th>
-                            <th>Estado</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="filesTableBody">
-                        <tr><td colspan="7" class="empty-msg">Nenhum arquivo registado.</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
-    const permitidos = ["1-abc-123", "2-8xpt-5m2z-lwq4-9", "3-9vqr-1n8j-kzp2-4", "4-7mfs-3g6l-hdj8-1", "5-2kwp-9rdx-btv6-3", "6-5hly-4nbm-zqc7-0", "7-1vtw-8kgp-mds4-6", "8-4zrn-6xbt-lhy9-5", "9-3jqc-2vwm-kgp7-8", "10-6ndr-9vfs-zlq3-1", "11-8kpt-4m2z-xhw9-5", "12-2jqr-7vfs-kgp1-4", "13-5mfs-9rdx-btv8-0", "14-3kwp-1n8j-mds6-2", "15-9hly-6xbt-zqc4-7", "16-1vtw-4nbm-lhy2-9", "17-4zrn-8kgp-kgp5-3", "18-7jqc-2vwm-zlq9-6", "19-0ndr-5m2z-mds1-8", "20-2kpt-9vfs-btv3-1", "21-5jqr-4m2z-zqc6-4", "22-8mfs-7vfs-lhy8-0", "23-1kwp-3g6l-kgp2-9", "24-4hly-9rdx-zlq5-3", "25-7vtw-1n8j-mds9-6", "26-9zrn-6xbt-btv1-8", "27-2jqc-8kgp-zqc3-1", "28-5ndr-2vwm-lhy6-4", "29-8kpt-5m2z-kgp8-0", "30-1jqr-9vfs-zlq2-9", "31-4mfs-4m2z-mds5-3", "32-7kwp-7vfs-btv9-6", "33-9hly-3g6l-zqc1-8", "34-2vtw-9rdx-lhy3-1", "35-5zrn-1n8j-kgp6-4", "36-8jqc-6xbt-zlq8-0", "37-1ndr-8kgp-mds2-9", "38-4kpt-2vwm-btv5-3", "39-7jqr-5m2z-zqc9-6", "40-9mfs-9vfs-lhy1-8", "41-2kwp-4m2z-kgp3-1", "42-5hly-7vfs-zlq6-4", "43-8vtw-3g6l-mds8-0", "44-1zrn-9rdx-btv2-9", "45-4jqc-1n8j-zqc5-3", "46-7ndr-6xbt-lhy9-6", "47-9kpt-8kgp-kgp1-8", "48-2jqr-2vwm-zlq3-1", "49-5mfs-5m2z-mds6-4", "50-8kwp-9vfs-btv8-0", "51-1hly-4m2z-zqc2-9", "52-4vtw-7vfs-lhy5-3", "53-7zrn-3g6l-kgp9-6", "54-9jqc-9rdx-zlq1-8", "55-2ndr-1n8j-mds3-1", "56-5kpt-6xbt-btv6-4", "57-8jqr-8kgp-zqc8-0", "58-1mfs-2vwm-lhy2-9", "59-4kwp-5m2z-kgp5-3", "60-7hly-9vfs-zlq9-6", "61-9vtw-4m2z-mds1-8", "62-2zrn-7vfs-btv3-1", "63-5jqc-3g6l-zqc6-4", "64-8ndr-9rdx-lhy8-0", "65-1kpt-1n8j-kgp2-9", "66-4jqr-6xbt-zlq5-3", "67-7mfs-8kgp-mds9-6", "68-9kwp-2vwm-btv1-8", "69-2hly-5m2z-zqc3-1", "70-5vtw-9vfs-lhy6-4", "71-8zrn-4m2z-kgp8-0", "72-1jqc-7vfs-zlq2-9", "73-3ndr-3g6l-mds5-3", "74-6kpt-9rdx-btv9-6", "75-9jqr-1n8j-zqc1-8", "76-2mfs-6xbt-lhy3-1", "77-4kwp-8kgp-kgp6-4", "78-7hly-2vwm-zlq8-0", "79-0vtw-5m2z-mds2-9", "80-2zrn-9vfs-btv5-3"];
+    const permitidos = [
+        "13-5mfs-9rdx-btv8-0",
+        "14-3kwp-1n8j-mds6-2",
+        "15-9hly-6xbt-zqc4-7",
+        "16-1vtw-4nbm-lhy2-9",
+        "17-4zrn-8kgp-kgp5-3",
+        "21-5jqr-4m2z-zqc6-4",
+        "4-7mfs-3g6l-hdj8-1",
+        "5-2kwp-9rdx-btv6-3",
+        "6-5hly-4nbm-zqc7-0",
+        "7-1vtw-8kgp-mds4-6",
+        "8-4zrn-6xbt-lhy9-5"
+    ];
 
-    const translations = {
-        pt: {
-            header: "SEGURANÇA SOCIAL", title: "Autenticação",
-            intro: "Introduza o código de verificação impresso no documento para validar a autenticidade.",
-            btnValidate: "Validar Documento", robot: "Não sou um robô", error: "Código inválido.",
-            success: "✓ Autenticação efetuada com sucesso", lblSt: "Estado", lblDt: "Data",
-            lblHr: "Hora", lblCd: "Código", valSt: "Autêntico", btnOpen: "ABRIR DOCUMENTO ORIGINAL",
-            btnNew: "Validar outro documento", contact: "Contate-nos",
-            n1: "Primeiro Nome", n2: "Sobrenome", em: "E-mail", as: "Assunto", ms: "Mensagem", btnSend: "Enviar Cadastro"
-        },
-        en: {
-            header: "SOCIAL SECURITY", title: "Authentication",
-            intro: "Enter the verification code printed on the document to validate authenticity.",
-            btnValidate: "Validate Document", robot: "I'm not a robot", error: "Invalid code.",
-            success: "✓ Authentication successful", lblSt: "Status", lblDt: "Date",
-            lblHr: "Time", lblCd: "Code", valSt: "Authentic", btnOpen: "OPEN ORIGINAL DOCUMENT",
-            btnNew: "Validate another document", contact: "Contact Us",
-            n1: "First Name", n2: "Last Name", em: "Email", as: "Subject", ms: "Message", btnSend: "Submit"
-        },
-        fr: {
-            header: "SÉCURITÉ SOCIALE", title: "Authentification",
-            intro: "Entrez le code de vérification imprimé sur le document pour valider l'authenticité.",
-            btnValidate: "Valider le document", robot: "Je ne suis pas un robot", error: "Code invalide.",
-            success: "✓ Authentification réussie", lblSt: "État", lblDt: "Date",
-            lblHr: "Heure", lblCd: "Code", valSt: "Authentique", btnOpen: "OUVRIR LE DOCUMENT ORIGINAL",
-            btnNew: "Valider un autre document", contact: "Contactez-nous",
-            n1: "Prénom", n2: "Nom", em: "E-mail", as: "Sujet", ms: "Message", btnSend: "Envoyer"
-        },
-        ro: {
-            header: "ASIGURĂRI SOCIALE", title: "Autentificare",
-            intro: "Introduceți codul de verificare tipărit pe document pentru a valida autenticitatea.",
-            btnValidate: "Validează Documentul", robot: "Nu sunt un robot", error: "Cod invalid.",
-            success: "✓ Autentificare reușită cu succes", lblSt: "Stare", lblDt: "Dată",
-            lblHr: "Ora", lblCd: "Cod", valSt: "Autentic", btnOpen: "DESCHIDE DOCUMENTUL ORIGINAL",
-            btnNew: "Validează alt document", contact: "Contactați-ne",
-            n1: "Prenume", n2: "Nume", em: "E-mail", as: "Subiect", ms: "Mesaj", btnSend: "Trimite"
-        },
-        es: {
-            header: "SEGURIDAD SOCIAL", title: "Autenticación",
-            intro: "Introduzca el código de verificación impreso en el documento para validar la autenticidad.",
-            btnValidate: "Validar Documento", robot: "No soy un robot", error: "Código inválido.",
-            success: "✓ Autenticación realizada con éxito", lblSt: "Estado", lblDt: "Fecha",
-            lblHr: "Hora", lblCd: "Código", valSt: "Auténtico", btnOpen: "ABRIR DOCUMENTO ORIGINAL",
-            btnNew: "Validar otro documento", contact: "Contáctenos",
-            n1: "Primer Nombre", n2: "Apellido", em: "Correo electrónico", as: "Asunto", ms: "Mensaje", btnSend: "Enviar"
-        }
-    };
+    async function validate() {
+        const input = document.getElementById('codigo').value.trim().toLowerCase();
+        document.getElementById('errorArea').style.display = 'none';
 
-    let currentLang = 'pt';
-    let isRobotChecked = false;
-    const _ae = "walkingvanitylda@proton.me";
-    const _ap = "Walking2026@";
-
-    function setLang(lang) {
-        currentLang = lang;
-        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`btn-lang-${lang}`).classList.add('active');
-
-        const t = translations[lang];
-        document.getElementById('h-txt').innerText = t.header;
-        document.getElementById('p-title').innerText = t.title;
-        document.getElementById('i-text').innerText = t.intro;
-        document.getElementById('btn-main').innerText = t.btnValidate;
-        document.getElementById('r-text').innerText = t.robot;
-        document.getElementById('errorArea').innerText = t.error;
-        document.getElementById('res-banner').innerText = t.success;
-        document.getElementById('lbl-st').innerText = t.lblSt;
-        document.getElementById('lbl-dt').innerText = t.lblDt;
-        document.getElementById('lbl-hr').innerText = t.lblHr;
-        document.getElementById('lbl-cd').innerText = t.lblCd;
-        document.getElementById('res-status').innerText = t.valSt;
-        document.getElementById('pdfLink').innerText = t.btnOpen;
-        document.getElementById('txt-new').innerText = t.btnNew;
-        document.getElementById('link-contact').innerText = t.contact;
-        document.getElementById('sid-title').innerText = t.contact;
-        document.getElementById('lbl-n1').innerText = t.n1;
-        document.getElementById('lbl-n2').innerText = t.n2;
-        document.getElementById('lbl-em').innerText = t.em;
-        document.getElementById('lbl-as').innerText = t.as;
-        document.getElementById('lbl-ms').innerText = t.ms;
-        document.getElementById('btn-send').innerText = t.btnSend;
-    }
-
-    function toggleRobot() {
-        isRobotChecked = !isRobotChecked;
-        const circle = document.getElementById('checkCircle');
-        const btn = document.getElementById('btn-main');
-        if (isRobotChecked) {
-            circle.classList.add('active');
-            btn.classList.add('ready');
-        } else {
-            circle.classList.remove('active');
-            btn.classList.remove('ready');
-        }
-    }
-
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('open');
-    }
-
-    function validate() {
-        if (!isRobotChecked) return;
-        const inputCode = document.getElementById('codigo').value.trim();
-        const errorArea = document.getElementById('errorArea');
-        const files = getFiles();
-
-        const existsInPermitidos = permitidos.includes(inputCode);
-        const existsInDynamic = files.some(f => f.filename === inputCode);
-
-        if (existsInPermitidos || existsInDynamic) {
-            errorArea.style.display = "none";
-            document.getElementById('searchArea').style.display = "none";
-            document.getElementById('resultArea').style.display = "block";
-
-            const now = new Date();
-            document.getElementById('res-date').innerText = now.toLocaleDateString('pt-PT');
-            document.getElementById('res-time').innerText = now.toLocaleTimeString('pt-PT', {hour: '2-digit', minute:'2-digit', second:'2-digit'});
-            document.getElementById('res-code').innerText = inputCode;
-            document.getElementById('pdfLink').href = "./" + inputCode + ".pdf";
-        } else {
-            errorArea.style.display = "block";
-        }
-    }
-
-    function resetPage() {
-        document.getElementById('codigo').value = "";
-        document.getElementById('searchArea').style.display = "block";
-        document.getElementById('resultArea').style.display = "none";
-        document.getElementById('errorArea').style.display = "none";
-        isRobotChecked = false;
-        document.getElementById('checkCircle').classList.remove('active');
-        document.getElementById('btn-main').classList.remove('ready');
-    }
-
-    /* Admin Features */
-    function openAdminModal() { document.getElementById('adminModal').classList.add('active'); }
-    function closeAdminModal() {
-        document.getElementById('adminModal').classList.remove('active');
-        document.getElementById('adminEmail').value = "";
-        document.getElementById('adminPass').value = "";
-        document.getElementById('adminError').style.display = "none";
-    }
-
-    function adminLogin() {
-        const em = document.getElementById('adminEmail').value.trim();
-        const pa = document.getElementById('adminPass').value;
-        if (em === _ae && pa === _ap) {
-            closeAdminModal();
-            document.getElementById('adminPanel').classList.add('active');
-            checkExpirations();
-            renderFilesTable();
-        } else {
-            document.getElementById('adminError').style.display = "block";
-        }
-    }
-
-    function adminLogout() { document.getElementById('adminPanel').classList.remove('active'); }
-
-    function getFiles() { return JSON.parse(localStorage.getItem('ss_files') || '[]'); }
-    function saveFiles(f) { localStorage.setItem('ss_files', JSON.stringify(f)); }
-
-    function renderFilesTable() {
-        const files = getFiles();
-        const tbody = document.getElementById('filesTableBody');
-        if (files.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="empty-msg">Nenhum arquivo registado.</td></tr>`;
+        if (!permitidos.includes(input)) {
+            document.getElementById('errorArea').innerText = 'Código inválido ou não autorizado.';
+            document.getElementById('errorArea').style.display = 'block';
             return;
         }
-        const now = new Date();
-        tbody.innerHTML = files.map((f, i) => {
-            const exp = new Date(f.expiryDate);
-            const diffTime = exp - now;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            let badgeClass = 'badge-active', statusText = 'Ativo';
-            if (diffDays <= 0) { badgeClass = 'badge-expired'; statusText = 'Expirado'; }
-            else if (diffDays <= 7) { badgeClass = 'badge-warning'; statusText = 'A expirar'; }
 
-            return `<tr>
-                <td style="font-weight:bold; color:var(--ss-blue);">${f.filename}</td>
-                <td>${f.email}</td>
-                <td>${new Date(f.startDate).toLocaleDateString('pt-PT')}</td>
-                <td>${exp.toLocaleDateString('pt-PT')}</td>
-                <td style="font-weight:bold;">${diffDays <= 0 ? 0 : diffDays} dias</td>
-                <td>
-                    <span class="badge ${badgeClass}">${statusText}</span>
-                    ${f.notified ? '<span class="badge badge-notified">Notificado</span>' : ''}
-                </td>
-                <td>
-                    ${diffDays <= 0 && !f.notified ? `<button class="btn-notify" onclick="notifyManual(${i})">Avisar</button>` : ''}
-                    <button class="btn-delete" onclick="deleteFile(${i})">Excluir</button>
-                </td>
-            </tr>`;
-        }).join('');
-    }
+        document.getElementById('searchArea').style.display = 'none';
+        document.getElementById('loadingArea').style.display = 'block';
 
-    function addFile() {
-        const fn = document.getElementById('newFilename').value.trim();
-        const em = document.getElementById('newEmail').value.trim();
-        const err = document.getElementById('addError');
-        if (!fn || !em) { err.innerText = "⚠ Preencha todos os campos."; err.style.display="block"; return; }
-        
-        const files = getFiles();
-        const now = new Date();
-        const exp = new Date();
-        exp.setDate(now.getDate() + 30);
+        const pdfUrl = input + ".pdf";
 
-        files.push({ filename: fn, email: em, startDate: now.toISOString(), expiryDate: exp.toISOString(), notified: false });
-        saveFiles(files);
-        
-        document.getElementById('newFilename').value = "";
-        document.getElementById('newEmail').value = "";
-        err.style.display = "none";
-        renderFilesTable();
-    }
-
-    function deleteFile(idx) {
-        if(confirm("Tem certeza que deseja excluir este registo?")) {
-            const files = getFiles();
-            files.splice(idx, 1);
-            saveFiles(files);
-            renderFilesTable();
-        }
-    }
-
-    async function notifyManual(idx) {
-        const files = getFiles();
-        const f = files[idx];
-        const banner = document.getElementById('expiryBanner');
-        banner.style.display = "block";
-        banner.innerHTML = `⏳ A enviar e-mail para ${f.email}...`;
-        
-        const sent = await sendExpiryEmail(f.filename, f.email, new Date(f.expiryDate).toLocaleDateString('pt-PT'));
-        if (sent) {
-            f.notified = true;
-            saveFiles(files);
-            banner.innerHTML = `✅ E-mail de aviso enviado com sucesso para ${f.email}.`;
-            renderFilesTable();
-        } else {
-            banner.innerHTML = `❌ Falha ao enviar e-mail para ${f.email}. Verifique a ligação.`;
-        }
-    }
-
-    async function checkExpirations() {
-        const files = getFiles();
-        const now = new Date();
-        const expiredList = files.filter(f => new Date(f.expiryDate) <= now && !f.notified);
-        
-        if (expiredList.length > 0) {
-            const banner = document.getElementById('expiryBanner');
-            banner.style.display = "block";
-            let changed = false;
-            banner.innerHTML = `⏳ Detetados ${expiredList.length} arquivos expirados. A enviar notificações por e-mail...`;
-            for (const f of files) {
-                if (new Date(f.expiryDate) <= now && !f.notified) {
-                    const sent = await sendExpiryEmail(f.filename, f.email, new Date(f.expiryDate).toLocaleDateString('pt-PT'));
-                    if (sent) { f.notified = true; changed = true; }
-                }
-            }
-            if (changed) {
-                saveFiles(files);
-                banner.innerHTML = `✅ Notificações enviadas para ${expiredList.length} arquivo(s) expirado(s).`;
-            }
-            renderFilesTable();
-        }
-    }
-
-    async function sendExpiryEmail(filename, toEmail, expiryDate) {
         try {
-            const res = await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(toEmail), {\n                method: 'POST',\n                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },\n                body: JSON.stringify({\n                    _subject: `Validade Expirada — Arquivo ${filename}`,\n                    Arquivo: filename,\n                    Mensagem: `O arquivo \"${filename}\" teve a sua validade expirada em ${expiryDate}. Por favor, tome as medidas necessárias para a renovação.`,\n                    _replyto: _ae\n                })\n            });
-            const data = await res.json();
-            return data.success === 'true' || data.success === true;
-        } catch(e) {
-            return false;
+            const res = await fetch(pdfUrl, { method: 'HEAD' });
+            document.getElementById('loadingArea').style.display = 'none';
+
+            if (res.ok) {
+                document.getElementById('resultArea').style.display = 'block';
+                document.getElementById('res-code').innerText = input;
+                document.getElementById('pdfLink').href = pdfUrl;
+            } else {
+                document.getElementById('searchArea').style.display = 'block';
+                document.getElementById('errorArea').innerText = '⚠️ Documento em processamento. Tente novamente em alguns minutos.';
+                document.getElementById('errorArea').style.display = 'block';
+            }
+        } catch (e) {
+            document.getElementById('loadingArea').style.display = 'none';
+            document.getElementById('searchArea').style.display = 'block';
+            document.getElementById('errorArea').innerText = 'Erro de ligação. Verifique a sua internet.';
+            document.getElementById('errorArea').style.display = 'block';
         }
     }
 </script>
