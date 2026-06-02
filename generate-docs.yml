@@ -1,0 +1,93 @@
+# ============================================================
+# ARQUIVO: .github/workflows/generate-docs.yml
+# REPOSITÓRIO: portal-seg.com-1
+# 
+# Coloque este arquivo em:
+#   portal-seg.com-1/.github/workflows/generate-docs.yml
+#
+# O que faz:
+#   A cada push (novo PDF adicionado), gera automaticamente
+#   um arquivo docs.json na raiz com a lista de todos os PDFs
+#   e a data em que cada um foi adicionado ao repositório.
+# ============================================================
+
+name: Gerar docs.json
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:  # permite rodar manualmente
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # histórico completo para pegar datas reais
+
+      - name: Gerar docs.json
+        run: |
+          python3 << 'PYEOF'
+          import os, json, subprocess
+          from datetime import datetime, timedelta
+
+          docs = []
+
+          # Lista todos os arquivos .pdf na raiz
+          for fname in sorted(os.listdir('.')):
+              if not fname.lower().endswith('.pdf'):
+                  continue
+
+              code = fname[:-4]  # remove .pdf
+
+              # Data do primeiro commit que adicionou este arquivo
+              result = subprocess.run(
+                  ['git', 'log', '--follow', '--diff-filter=A',
+                   '--format=%cI', '--', fname],
+                  capture_output=True, text=True
+              )
+              lines = result.stdout.strip().split('\n')
+              # Pega o mais antigo (último da lista)
+              added_iso = None
+              for line in reversed(lines):
+                  line = line.strip()
+                  if line:
+                      added_iso = line
+                      break
+
+              if not added_iso:
+                  added_iso = datetime.utcnow().isoformat() + 'Z'
+
+              # Calcula expiração: data de adição + 90 dias
+              try:
+                  added_dt = datetime.fromisoformat(added_iso.replace('Z','+00:00'))
+              except Exception:
+                  added_dt = datetime.utcnow()
+
+              expiry_dt = added_dt + timedelta(days=90)
+              expiry_dt = expiry_dt.replace(hour=23, minute=59, second=59)
+
+              docs.append({
+                  'filename':    code,
+                  'added_date':  added_dt.isoformat(),
+                  'expiry_date': expiry_dt.isoformat()
+              })
+
+          with open('docs.json', 'w', encoding='utf-8') as f:
+              json.dump(docs, f, ensure_ascii=False, indent=2)
+
+          print(f"docs.json gerado com {len(docs)} arquivo(s).")
+          PYEOF
+
+      - name: Commit docs.json
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs.json
+          git diff --staged --quiet || git commit -m "chore: actualiza docs.json [skip ci]"
+          git push
