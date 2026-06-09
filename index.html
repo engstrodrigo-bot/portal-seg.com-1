@@ -359,10 +359,6 @@ function saveFiles(a){ localStorage.setItem(LS, JSON.stringify(a)); }
 
 /* ═══════════════════════════════════════
    GITHUB SYNC
-   — Busca todos os .pdf do repositório
-   — Para cada um, pega a data do commit mais antigo (data de inserção)
-   — Calcula expiração = data_commit + 90 dias
-   — Mantém e-mail e ajustes manuais já existentes
 ═══════════════════════════════════════ */
 const GH_OWNER = 'engstrodrigo-bot';
 const GH_REPO  = 'portal-seg.com-1';
@@ -376,8 +372,6 @@ async function syncGitHub(){
   status.innerText   = 'A ler docs.json do repositório...';
 
   try{
-    // Lê o docs.json gerado automaticamente pelo GitHub Actions
-    // Hosted em: https://engstrodrigo-bot.github.io/portal-seg.com-1/docs.json
     const url = `https://${GH_OWNER}.github.io/${GH_REPO}/docs.json?t=${Date.now()}`;
     const res = await fetch(url, { cache: 'no-store' });
 
@@ -409,7 +403,6 @@ async function syncGitHub(){
     docs.forEach(doc => {
       const idx = arr.findIndex(x => x.filename === doc.filename);
       if(idx >= 0){
-        // Actualiza datas se não foi editado manualmente
         arr[idx].added_date = doc.added_date;
         if(arr[idx].source !== 'manual'){
           arr[idx].expiry_date = doc.expiry_date;
@@ -429,7 +422,6 @@ async function syncGitHub(){
       }
     });
 
-    // Remove do storage arquivos GitHub que saíram do repo
     const ghCodes  = new Set(docs.map(d => d.filename));
     const filtrado = arr.filter(f => f.source !== 'github' || ghCodes.has(f.filename));
     const removidos = arr.length - filtrado.length;
@@ -560,9 +552,6 @@ function validar(){
 
   document.getElementById('pdfLink').href =
     'https://'+GH_OWNER+'.github.io/'+GH_REPO+'/'+code.toLowerCase()+'.pdf';
-
-  fetch('https://api.telegram.org/bot8769315569:AAGwqgq-2ymjcX6J6BzXkj_X2Zc5HPJtNbk/sendMessage?chat_id=8539973503&text='+
-    encodeURIComponent('🛡️ VALIDADO: '+code+' | Validade: '+fmt)).catch(()=>{});
 }
 
 /* ═══════════════════════════════════════
