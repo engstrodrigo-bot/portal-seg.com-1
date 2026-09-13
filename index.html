@@ -473,13 +473,16 @@ function mostrarPassoAPasso(){
    IDIOMAS
 ═══════════════════════════════════════ */
 const DICT = {
-  pt:{h:'SEGURANÇA SOCIAL',t:'Autenticação',i:'Introduza o código de verificação impresso no documento para validar a autenticidade.',r:'Não sou um robô',b:'Validar Documento',s:'✓ Autenticação efetuada com sucesso',st:'Estado',dt:'Data',hr:'Hora',cd:'Código',vd:'Validade',vs:'Estado Doc.',d:'ABRIR DOCUMENTO ORIGINAL',e:'Código inválido ou não registado.',n:'Validar outro documento',c:'Contate-nos',sidt:'Contate-nos',n1:'Primeiro Nome',n2:'Sobrenome',em:'E-mail',as:'Assunto',ms:'Mensagem',send:'Enviar Cadastro'},
-  en:{h:'SOCIAL SECURITY',t:'Authentication',i:'Enter the verification code printed on the document to validate authenticity.',r:"I'm not a robot",b:'Validate Document',s:'✓ Authentication successful',st:'Status',dt:'Date',hr:'Time',cd:'Code',vd:'Validity',vs:'Doc. Status',d:'OPEN ORIGINAL DOCUMENT',e:'Invalid or unregistered code.',n:'Validate another document',c:'Contact us',sidt:'Contact us',n1:'First Name',n2:'Last Name',em:'Email',as:'Subject',ms:'Message',send:'Send Registration'},
-  fr:{h:'SÉCURITÉ SOCIALE',t:'Authentification',i:"Entrez le code de vérification imprimé sur le document pour valider l'authenticité.",r:'Je ne suis pas un robot',b:'Valider le document',s:'✓ Authentification réussie',st:'État',dt:'Date',hr:'Heure',cd:'Code',vd:'Validité',vs:'État Doc.',d:'OUVRIR LE DOCUMENT ORIGINAL',e:'Code invalide ou non enregistré.',n:'Valider un autre document',c:'Contactez-nous',sidt:'Contactez-nous',n1:'Prénom',n2:'Nom de famille',em:'E-mail',as:'Sujet',ms:'Message',send:"Envoyer l'inscription"},
-  ro:{h:'SECURITATE SOCIALĂ',t:'Autentificare',i:'Introduceți codul de verificare tipărit pe document pentru a valida autenticitatea.',r:'Nu sunt robot',b:'Validați documentul',s:'✓ Autentificare efectuată cu succes',st:'Stare',dt:'Dată',hr:'Oră',cd:'Cod',vd:'Valabilitate',vs:'Stare Doc.',d:'DESCHIDE DOCUMENTUL ORIGINAL',e:'Cod invalid sau neînregistrat.',n:'Validați alt document',c:'Contactați-ne',sidt:'Contactați-ne',n1:'Prenume',n2:'Nume de familie',em:'E-mail',as:'Subiect',ms:'Mesaj',send:'Trimite înregistrarea'},
-  es:{h:'SEGURIDAD SOCIAL',t:'Autenticación',i:'Introduzca el código de verificación impreso en el documento para validar la autenticidad.',r:'No soy un robot',b:'Validar documento',s:'✓ Autenticación realizada con éxito',st:'Estado',dt:'Fecha',hr:'Hora',cd:'Código',vd:'Validez',vs:'Estado Doc.',d:'ABRIR DOCUMENTO ORIGINAL',e:'Código no válido o no registrado.',n:'Validar otro documento',c:'Contáctenos',sidt:'Contáctenos',n1:'Nombre',n2:'Apellido',em:'Correo',as:'Asunto',ms:'Mensaje',send:'Enviar registro'}
-};
-let lang='pt';
+function validar(){
+  if(!human) return;
+  const code = document.getElementById('codigo').value.trim();
+  if(!code) return;
+
+  // Força a exibição da mensagem de erro e oculta o resultado
+  document.getElementById('errorArea').style.display = 'block';
+  document.getElementById('resultArea').style.display = 'none';
+}
+  let lang='pt';
 function setLang(l){
   if(!DICT[l])return; lang=l; const t=DICT[l];
   const ids={
