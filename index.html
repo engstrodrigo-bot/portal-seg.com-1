@@ -58,7 +58,7 @@ footer{background:#f1f1f1;border-top:4px solid var(--ss-yellow);padding:35px 20p
 /* ── SINO AUTH ── */
 #sinoAuth{display:none;position:fixed;top:58px;left:10px;width:300px;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.2);z-index:4000;padding:20px;}
 #sinoAuth.open{display:block;}
-.sino-hdr{display:flex;justify-space-between;align-items:center;margin-bottom:14px;}
+.sino-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
 .sino-hdr h4{margin:0;color:var(--ss-blue);font-size:14px;}
 .sino-close-btn{background:none;border:none;font-size:20px;cursor:pointer;color:#555;line-height:1;}
 .sino-err{color:#c00;font-size:12px;font-weight:bold;display:none;margin-bottom:8px;}
@@ -518,18 +518,9 @@ function validar(){
   const code = document.getElementById('codigo').value.trim();
   if(!code) return;
 
-  // Verifica se o texto digitado é um link (http, https ou www)
-  const eUmLink = /^(http|https):\/\//i.test(code) || /^www\./i.test(code);
-
   const doc = getFiles().find(f => f.filename === code);
-
-  // Se for um link OU se o código não estiver cadastrado, mostra erro
-  if(eUmLink || !doc){
-    document.getElementById('errorArea').innerText = eUmLink 
-      ? 'Links não são aceitos. Introduza apenas o código de verificação.' 
-      : DICT[lang].e;
-    document.getElementById('errorArea').style.display = 'block';
-    document.getElementById('resultArea').style.display = 'none';
+  if(!doc){
+    document.getElementById('errorArea').style.display='block';
     return;
   }
 
@@ -678,7 +669,7 @@ function doLogin(){
 function doLogout(){ logado=false; sinoAuth=false; mostrarLogin(); }
 
 function showTab(t){
-  document.getElementById('tab-add').style.display   = t==='add'  ?'block':'none';
+  document.getElementById('tab-add').style.display  = t==='add'  ?'block':'none';
   document.getElementById('tab-list').style.display = t==='list' ?'block':'none';
   document.getElementById('tab-btn-add').classList.toggle('active',  t==='add');
   document.getElementById('tab-btn-list').classList.toggle('active', t==='list');
