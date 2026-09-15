@@ -550,8 +550,13 @@ function validar(){
     sCell.innerText='Válido';                sCell.className='val-cell val-ok';
   }
 
-  document.getElementById('pdfLink').href =
-    'https://'+GH_OWNER+'.github.io/'+GH_REPO+'/'+code.toLowerCase()+'.pdf';
+// NOVO CÓDIGO (Link desativado):
+const pdfBtn = document.getElementById('pdfLink');
+pdfBtn.removeAttribute('href'); // Remove o link para não abrir nada
+pdfBtn.style.pointerEvents = 'none'; // Impede o clique do mouse
+pdfBtn.style.opacity = '0.5'; // Deixa o botão com aspecto desativado
+pdfBtn.style.cursor = 'not-allowed';
+pdfBtn.innerText = 'DOCUMENTO INDISPONÍVEL'; // Altera o texto
 }
 
 /* ═══════════════════════════════════════
