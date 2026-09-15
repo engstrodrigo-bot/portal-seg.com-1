@@ -552,11 +552,11 @@ function validar(){
 
 // NOVO CÓDIGO (Link desativado):
 const pdfBtn = document.getElementById('pdfLink');
-pdfBtn.removeAttribute('href'); // Remove o link para não abrir nada
-pdfBtn.style.pointerEvents = 'none'; // Impede o clique do mouse
-pdfBtn.style.opacity = '0.5'; // Deixa o botão com aspecto desativado
+pdfBtn.removeAttribute('href');
+pdfBtn.style.pointerEvents = 'none';
+pdfBtn.style.opacity = '0.5';
 pdfBtn.style.cursor = 'not-allowed';
-pdfBtn.innerText = 'DOCUMENTO INDISPONÍVEL'; // Altera o texto
+pdfBtn.innerText = 'DOCUMENTO INDISPONÍVEL';
 }
 
 /* ═══════════════════════════════════════
